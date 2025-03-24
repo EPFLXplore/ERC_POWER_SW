@@ -1,6 +1,5 @@
 #include "BQ25756E.h"
-#include <Arduino.h> // not needed if using BQ25756E.h
-#include <Wire.h> // not needed if using BQ25756E.h
+#include "LedManager.h"
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
@@ -11,6 +10,33 @@
 #define MAX_INPUT_CURRENT 20000
 #define MIN_INPUT_VOLTAGE 4200
 #define MAX_INPUT_VOLTAGE 36000
+
+/* ------------------------ BQ25756E Configuration Parameters - Xplore imposed specifications ------------------------ */
+// charge current constraints for pre-charge mode between 0V and 20.48V
+#define MIN_CHARGE_CURRENT_PRE 250
+#define DEFAULT_CHARGE_CURRENT_PRE 500
+#define MAX_CHARGE_CURRENT_PRE 1000
+#define CURRENT_STEP_PRE 50
+// charge current constraints for CC mode between 20.48V and 23V
+#define MIN_CHARGE_CURRENT_CC_20 400
+#define DEFAULT_CHARGE_CURRENT_CC_20 1000
+#define MAX_CHARGE_CURRENT_CC_20 1500
+#define CURRENT_STEP_CC_20 50
+// charge current constraints for CC mode between 23V and 24V
+#define MIN_CHARGE_CURRENT_CC_23 1000
+#define DEFAULT_CHARGE_CURRENT_CC_23 1500
+#define MAX_CHARGE_CURRENT_CC_23 2000
+#define CURRENT_STEP_CC_23 100
+// charge current constraints for CC mode between 24V and 28.3V
+#define MIN_CHARGE_CURRENT_CC_24 1500
+#define DEFAULT_CHARGE_CURRENT_CC_24 3000
+#define MAX_CHARGE_CURRENT_CC_24 5500
+#define CURRENT_STEP_CC_24 100
+// charge current constraints for CV mode at 28.3V
+#define MIN_CHARGE_CURRENT_CV 250
+#define DEFAULT_CHARGE_CURRENT_CV 500
+#define MAX_CHARGE_CURRENT_CV 1050
+#define CURRENT_STEP_CV 50
 
 // ESP32-S3 GPIO pin definitions
 #define IMON1_PIN 1
@@ -30,9 +56,14 @@
 #define FAULT2 33
 #define FAULT1 34
 #define GPIO35_SDA 35
-#define GPIO36 36
+#define PLUS_BUTTON 36
 #define GPIO37_SCL 37
 #define PGn 38
+#define U0TXD_AS_MINUS_BUTTON 43
+#define U0RXD_AS_GPIO 44
+
+// ADC channels parameters
+#define MOVING_AVG_SIZE 10
 
 // Display definitions for a 0.96" OLED (usually 128x64)
 #define SCREEN_WIDTH 128
@@ -41,27 +72,45 @@
 #define OLED_ADDRESS 0x3C // 7-bit I2C address for the OLED display (0x78 or 0x7A for 8-bit) 
 
 // Function declarations
+void initializeConsole(unsigned long baudRate = 115200, unsigned long timeoutMs = 2000);
 void setupGPIOs();
-// void printByteAsBinary(uint8_t value);
-// void print2BytesAsBinary(uint16_t value);
-void printRegisters();
 void updateDisplay();
 void getCurrents();
+void updateLED();
+void displayChargerStage();
+//void IRAM_ATTR handleFaultInterrupt();
+void updateChargeState();
+void displayElapsedTime();
+void handleCurrentButtons();
+void checkChargeCurrentConstraints();
 
 // Creat a BQ25756E object
 BQ25756E charger(BQ25756E_ADDRESS, SWITCHING_FREQUENCY, MAX_CHARGE_CURRENT, MAX_INPUT_CURRENT, MIN_INPUT_VOLTAGE, MAX_INPUT_VOLTAGE);
 
-// Create a BQ25756E configuration structure
+// Create a BQ25756E configuration structure  
 BQ25756E_Config chargerConfig = {
-    .chargeVoltageLimit = 1524,
-    .chargeCurrentLimit = 5000,
-    .inputCurrentDPMLimit = 7000,
-    .inputVoltageDPMLimit = 11000,
-    .prechargeCurrentLimit = 500,
-    .terminationCurrentLimit = 500,
-    .terminationControlEnabled = true,
-    .fastChargeThreshold = 0b11, // 71.4% x VFB_REG
-    .prechargeControlEnabled = true,
+    .chargeVoltageLimit = 1504, // Range: 1504mV (28.31V) to 1566 mV(29.48V)
+    .chargeCurrentLimit = DEFAULT_CHARGE_CURRENT_CC_24, // Displayed charge current will be lower by around 10%, but the real current will be close to the set value. Range: 0.4A to 10A
+    .inputCurrentDPMLimit = 7000, // Range: 0.4A to 20A
+    .inputVoltageDPMLimit = 15000, // voltage in mV under which the charger will reduce the input current
+    .prechargeCurrentLimit = DEFAULT_CHARGE_CURRENT_PRE, // Range: 0.25A to 10A
+    .terminationCurrentLimit = DEFAULT_CHARGE_CURRENT_CV, // Range: 0.25A to 10A
+    .terminationControlEnabled = true, // Enable termination current control
+    .fastChargeThreshold = 0b11, // 0b00 = 30% x VFB_REG, 0b01 = 55% x VFB_REG, 0b10 = 66.7% x VFB_REG, 0b11 = 71.4% x VFB_REG = 71.4% x 1524 = 1088mV -> fast charge above 20.48V
+    .prechargeControlEnabled = true, // Enable pre-charge and trickle charge functions
+    .topOffTimer = 0b00, // 0b00 = Disable, 0b01 = 15 minutes, 0b10 = 30 minutes, 0b11 = 45 minutes
+    .watchdogTimer = 0b00, // 0b00 = Disable, 0b01 = 40s, 0b10 = 80s, 0b11 = 160s
+    .safetyTimerEnabled = false, // disabled
+    .safetyTimer = 0b00, // 0b00 = 5h, 0b01 = 8h, 0b10 = 12h, 0b11 = 24h
+    .safetyTimerSpeed = false,
+    .constantVoltageTimer = 0b0010, // 0b0000 = disable, 0b0001 = 1h, 0b0010 = 2h, ... 0b1111 = 15h
+    .autoRechargeThreshold = 0b11, // 0b00 = 93%, 0b01 = 94.3%, 0b10 = 95.2%, 0b11 = 97.6%
+    .watchdogTimerResetEnabled = false, 
+    .CEPinEnabled = true, // Enable the control of the charger with the switch connected to the CE pin
+    .ChargeBehaviorWatchdogExpired = true, // 0b = EN_CHG resets to 0, 1b = EN_CHG resets to 1 when watchdog expires
+    .highZModeEnabled = false,
+    .batteryLoadEnabled = false, // Disable battery load
+    .chargeEnabled = true, // Enable charging
     .enableMPPT = false,
     .verbose = true
 };
@@ -72,6 +121,10 @@ TwoWire myWire(1);
 // Create an SSD1306 display object using myWire
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &myWire, OLED_RESET);
 
+// Create a LedManager object
+LedManager led;
+
+/* ---------------------------------- Global variables ---------------------------------- */
 // Global variables for power path currents
 float BAT_CURRENT = 0.0;
 float SUPPLY_CURRENT = 0.0;
@@ -81,102 +134,117 @@ const int ADC_RESOLUTION = 4095;      // 12-bit ADC: 0-4095 counts
 const float ADC_VOLTAGE_PER_COUNT = ADC_REF_VOLTAGE / ADC_RESOLUTION;
 const float AMPLIFIER_GAIN = 20.0;      // The amplifier multiplies the sense voltage by 20
 
-// Non-blocking LED blinking variables
+// Non-blocking LED variables
+uint8_t led_state = 0;
 unsigned long previousMillis = 0;
-const unsigned long interval = 2000; // interval in milliseconds
-bool ledState = LOW;
+unsigned long ledMillis = 0;
+const unsigned long interval = 200; // interval in milliseconds
+// Charger state
+enum ChargeStates : uint8_t {
+  NOT_CHA      = 0b000,
+  TRICKLE      = 0b001,
+  PRECHARGE    = 0b010,
+  CC           = 0b011,
+  CV           = 0b100,
+  RSVD         = 0b101,
+  TOPOFF       = 0b110,
+  DONE         = 0b111
+};
+
+const char* const ChargeStateStrings[] = {
+  "NOT_CHA",   // 0b000
+  "TRICKLE",   // 0b001
+  "PRECHARGE", // 0b010
+  "CC",        // 0b011
+  "CV",        // 0b100
+  "RSVD",      // 0b101
+  "TOPOFF",    // 0b110
+  "DONE"       // 0b111
+};
+uint8_t chargeState = 0;
+uint8_t previousChargeState = 0;
+bool chargerisinFault = false;
+unsigned long chargeStartTime = 0;  // Records when the charge cycle starts
+bool charging = false;   
 
 Stream* console = nullptr;
-
-// Helper function to attempt USBSerial first, then fallback to hardware Serial:
-void initializeConsole(unsigned long baudRate = 115200, unsigned long timeoutMs = 2000) {
-    // First try initializing USBSerial
-    USBSerial.begin(baudRate);
-
-    unsigned long start = millis();
-    while (!USBSerial && (millis() - start) < timeoutMs) {
-        // waiting briefly to see if the USB CDC becomes ready
-    }
-    if (USBSerial) {
-        // If the USB CDC is up, use USBSerial as the console
-        console = &USBSerial;
-        console->println("Using USB CDC for console");
-    } else {
-        // Otherwise, fall back to hardware Serial
-        Serial.begin(baudRate);
-        console = &Serial;
-        console->println("Using hardware Serial for console");
-    }
-    delay(3000); // Allow time for the Serial port to initialize
-}
 
 void setup() {
   initializeConsole(); // Decide which Serial to use
 
-  // Initialize the I2C bus
-  Wire.begin(SDA_PIN, SCL_PIN);
-  myWire.begin(GPIO35_SDA, GPIO37_SCL);
+  // Initialize the two I2C bus
+  Wire.begin(SDA_PIN, SCL_PIN); // Default I2C bus for the charger
+  myWire.begin(GPIO35_SDA, GPIO37_SCL); // Second I2C bus for the OLED display
 
   // Initialize the OLED display
-  if(!display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDRESS)) {
-    console->println("SSD1306 allocation failed");
-    while(1);
-  } else {
-    console->println("SSD1306 allocation successful");
-  }
+  if(!display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDRESS)) { console->println("Failed to initialize SSD1306"); } 
+  else { console->println("SSD1306 initialized successfully!"); }
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(SSD1306_WHITE);
 
   // Configure GPIO pins
   setupGPIOs();
+  // Initialize the RTOS LED
+  led.begin();
+  led.startBlinkForDuration(200, 200, 1400);
 
   console->println("\nInitializing BQ25756E charger...\n");
-
-  // Initialize the charger with the configuration structure
   charger.setDebugStream(console); // Let the charger's library know which stream to use for debug
-  charger.init(chargerConfig);
+  charger.init(chargerConfig); // Initialize the charger with the configuration structure
+  previousChargeState = charger.getChargeCycleStatus(); // Get the initial charge state
   console->println("\nBQ25756E charger initialized successfully!\n");
-  delay(1000);
 }
 
 void loop() {
   unsigned long currentMillis = millis();
-
-  // Non-blocking LED blinking
-  if (currentMillis - previousMillis >= interval) {
+  if (currentMillis - previousMillis >= interval) { // Update every 'interval' milliseconds (400ms)
     previousMillis = currentMillis;
-    ledState = !ledState;
-    digitalWrite(LED_DEBUG, ledState);
+    chargeState = charger.getChargeCycleStatus();
+    if ((charger.getVBATADC() > 20000 && charger.getVBATADC() < 29000) && chargeState != NOT_CHA) {checkChargeCurrentConstraints();}
+    handleCurrentButtons();
     getCurrents();
+    updateChargeState();
+    if (previousChargeState != chargeState) {
+      updateLED();
+      console->print("New Charge state: ");
+      console->println(charger.getChargeCycleStatus());
+      previousChargeState = chargeState;
+    }
+    if (led_state != chargeState) {updateLED();}
+    //charger.printChargerConfig(false);
     updateDisplay();
   }
-
-  charger.printChargerConfig(false);
-  // console->print("Charge voltage limit before: ");
-  // console->println(charger.getChargeVoltageLimit());
-  // charger.setChargeVoltageLimit(1536);
-  // console->print("Charge voltage limit after: ");
-  // console->println(charger.getChargeVoltageLimit());
-  // charger.setChargeVoltageLimit(1512);
-  // console->print("Pin configuration before: ");
-  // charger.printByteAsBinary(charger.getPinControl());
-  // charger.enablePins(1, 1, 1, 1);
-  
-  //printRegisters();
-  delay(10000);
-
-  // console->print("Pin configuration after: ");
-  // charger.printByteAsBinary(charger.getPinControl());
-  // charger.enablePins(0, 0, 0, 0);
-
-  //delay(5000);
 }
 
-// Function to setup GPIO pins
+// Helper function to attempt USBSerial first, then fallback to hardware Serial:
+void initializeConsole(unsigned long baudRate, unsigned long timeoutMs) {
+  // First try initializing USBSerial
+  delay(1500); // Allow time for the serial monitor of PlatformIO to connect
+  USBSerial.begin(baudRate);
+
+  unsigned long start = millis();
+  while (!USBSerial && (millis() - start) < timeoutMs) {
+      // waiting briefly to see if the USB CDC becomes ready
+  }
+  if (USBSerial) {
+      // If the USB CDC is up, use USBSerial as the console
+      console = &USBSerial;
+      console->println("Using USB CDC for console");
+  } else {
+      // Otherwise, fall back to hardware Serial
+      Serial.begin(baudRate);
+      console = &Serial;
+      console->println("Using hardware Serial for console");
+  }
+  delay(300); // Allow time for the Serial port to initialize
+}
+
 void setupGPIOs() {
-  // Debug LED
+  // ESP32-S3 GPIOs
   pinMode(LED_DEBUG, OUTPUT);
+  pinMode(PLUS_BUTTON, INPUT_PULLUP);
+  pinMode(U0TXD_AS_MINUS_BUTTON, INPUT_PULLUP);
   // LTC3126 GPIOs
   pinMode(VALID_1, INPUT);
   pinMode(VALID_2, INPUT);
@@ -185,50 +253,18 @@ void setupGPIOs() {
   // LTC7000 GPIOs
   pinMode(FAULT1, INPUT);
   pinMode(FAULT2, INPUT);
+  analogReadResolution(12);  // Ensure 12-bit resolution
+  // analogSetPinAttenuation(IMON1_PIN, ADC_0db);
+  // analogSetPinAttenuation(IMON2_PIN, ADC_0db);
+  // adcAttachPin(IMON1_PIN);
+  // adcAttachPin(IMON2_PIN);
   pinMode(IMON1_PIN, INPUT);
   pinMode(IMON2_PIN, INPUT);
   // BQ25756E GPIOs
   pinMode(PGn, INPUT);
   pinMode(CHARGER_INTERRUP, INPUT);
-}
-
-// // Function to print a byte as binary (8 bits)
-// void printByteAsBinary(uint8_t value) {
-//   for (int i = 7; i >= 0; i--) {
-//       Serial.print((value >> i) & 1);
-//   }
-//   Serial.println();
-// }
-
-// // Function to print two bytes as binary (16 bits)
-// void print2BytesAsBinary(uint16_t value) {
-//   for (int i = 15; i >= 0; i--) {
-//       Serial.print((value >> i) & 1);
-//   }
-//   Serial.println();
-// }
-
-void printRegisters() {
-
-  console->print("Charge voltage limit: ");
-  console->print(charger.getChargeVoltageLimit());
-  console->println(" mV");
-  // console->print("Charge current limit: ");
-  // console->print(charger.getChargeCurrentLimit());
-  // console->println(" mA");
-  // console->print("Input current DPM limit: ");
-  // console->print(charger.getInputCurrentDPMLimit());
-  // console->println(" mA");
-  // console->print("Input voltage DPM limit: ");
-  // console->print(charger.getInputVoltageDPMLimit());
-  // console->println(" mV");
-  // console->print("Reverse mode input current limit: ");
-  // console->print(charger.getReverseModeInputCurrentLimit());
-  // console->println(" mA");
-  // console->print("Reverse mode input voltage limit: ");
-  // console->print(charger.getReverseModeInputVoltageLimit());
-  // console->println(" mV");
-  console->println();
+  // Attach interrupt to the INT pin, trigger on FALLING edge
+  // attachInterrupt(digitalPinToInterrupt(CHARGER_INTERRUP), handleFaultInterrupt, FALLING);
 }
 
 void updateDisplay() {
@@ -237,30 +273,63 @@ void updateDisplay() {
   display.setCursor(0, 0);
   display.println("ElonMux V1.0");
   display.println();
-  // display.print("PGOOD: ");
-  // display.println(digitalRead(PGOOD) ? "HIGH" : "LOW");
-  display.println(digitalRead(PRIORITY) ? "MCU POWERED BY USB" : "MCU POWERED BY VOUT");
-  // display.print("VALID1: ");
-  // display.println(digitalRead(VALID_1) ? "HIGH" : "LOW");
-  // display.print("VALID2: ");
-  // display.println(digitalRead(VALID_2) ? "HIGH" : "LOW");
   if (!digitalRead(FAULT1) && digitalRead(FAULT2)) {
-    display.println("SUPPLY OUT");
+    display.print("SUPPLY OUT - ");
+    display.print(SUPPLY_CURRENT);
+    display.println("A");
   } else if (digitalRead(FAULT1) && !digitalRead(FAULT2)) {
-    display.println("BATTERY OUT");
+    display.println("BATTERY OUT - ");
+    display.print(BAT_CURRENT);
+    display.println("A");
   } else {
-    display.println("NO OUTPUT");
+    display.println("NO OUTPUT - USB PWRD");
   }
-  display.print("SUPPLY curr: ");
-  display.print(digitalRead(PRIORITY) ? 0.00 : SUPPLY_CURRENT);
-  display.println("A");
-  display.print("BATTER curr: ");
-  display.print(digitalRead(PRIORITY) ? 0.00 : BAT_CURRENT );
-  display.println("A");
+  display.print("Charge state: ");
+  displayChargerStage();
+  if (charger.getVBATADC() > 20000 && !digitalRead(PGn)) {
+    display.print("VBAT: ");
+    float vbatValue = charger.getVBATADC() / 1000.0;
+    display.print(vbatValue, 3);
+    display.println("V");
+  } else {
+    display.println("NO BATTERY ON CHARGER");
+  }
+  if (chargeState != 0b000) {
+    display.print("CHARGE curr: ");
+    float chargeCurrent = charger.getIBATADC() / 1000.0;
+    display.print(chargeCurrent, 3);
+    display.println("A");
+    display.print("INPUT  curr: ");
+    float inputCurrent = charger.getIACADC() / 1000.0;
+    display.print(inputCurrent, 3);
+    display.println("A");
+  } else {
+    display.print("SET CHG. curr: ");
+    display.print(static_cast<float>(charger.getChargeCurrentLimit()) / 1000.0);
+    display.println("A");
+    display.print("SET target V: ");
+    display.print((((static_cast<float>(chargerConfig.chargeVoltageLimit) * 249000.0) / 13967.0) + chargerConfig.chargeVoltageLimit)/1000);
+    display.println("V");
+  }
+  if (digitalRead(PGn)) {
+    display.print("VSUPPLY TOO LOW");
+    chargerisinFault = true;
+    led_state = 10;
+    led.startBlink(500, 500);
+  } else {
+    chargerisinFault = false;
+  }
+  displayElapsedTime();
   display.display();
 }
 
 void getCurrents() {
+  // Static buffers and variables to store readings and track the index and count
+  static float supplyBuffer[MOVING_AVG_SIZE] = {0};
+  static float batteryBuffer[MOVING_AVG_SIZE] = {0};
+  static int bufferIndex = 0;
+  static int sampleCount = 0;
+
   // Read the raw ADC values from the two pins
   int rawSupply = analogRead(IMON1_PIN);
   int rawBattery = analogRead(IMON2_PIN);
@@ -277,7 +346,149 @@ void getCurrents() {
   supplySenseVoltage *= 1000;
   batterySenseVoltage *= 1000;
 
-  // With 1 mV per 1A at the sense resistor, the sense voltage in mV equals the current in Amps
-  SUPPLY_CURRENT = supplySenseVoltage;  // in Amps
-  BAT_CURRENT = batterySenseVoltage;      // in Amps
+  // Store the new readings into the buffers (moving average)
+  supplyBuffer[bufferIndex] = supplySenseVoltage;
+  batteryBuffer[bufferIndex] = batterySenseVoltage;
+
+  // Update index and sample count
+  bufferIndex = (bufferIndex + 1) % MOVING_AVG_SIZE;
+  if (sampleCount < MOVING_AVG_SIZE) {
+    sampleCount++;
+  }
+
+  // Calculate the moving average for each channel
+  float supplySum = 0, batterySum = 0;
+  for (int i = 0; i < sampleCount; i++) {
+    supplySum += supplyBuffer[i];
+    batterySum += batteryBuffer[i];
+  }
+  
+  // With 1 mV per 1A at the sense resistor, the average sense voltage in mV equals the current in Amps
+  SUPPLY_CURRENT = supplySum / sampleCount;
+  BAT_CURRENT = batterySum / sampleCount;
+}
+
+void updateLED() {
+  switch (previousChargeState) {
+    case PRECHARGE: // Precharge
+      led_state = 2;
+      led.startFading(3000);
+      break;
+    case CC: // Constant Current
+      led_state = 3;
+      led.startFading(1000);
+      break;
+    case CV: // Constant Voltage
+      led_state = 4;
+      led.startFading(500);
+      break;
+    case DONE: // Done
+      led_state = 7;
+      led.LEDON();
+      break;
+    default: // Other states
+      led_state = 0;
+      led.LEDOFF();
+      break;
+  }
+}
+
+void displayChargerStage() {
+  if (previousChargeState <= DONE) {
+    display.println(ChargeStateStrings[previousChargeState]);
+  } else {
+    display.println("UNKNOWN");
+  }
+}
+
+// void IRAM_ATTR handleFaultInterrupt() {
+//   chargerisinFault = true;  // Set the flag when an interrupt occurs
+//   charger.disableCharge();  // Disable charging when a fault occurs
+//   led_state = 10;
+//   console->println("Fault interrupt triggered!");
+//   led.startBlink(200, 200);  // Start blinking the LED
+// }
+
+void updateChargeState() {
+  // If the charger state is no longer "NOT_CHA" and we haven't started timing yet
+  if (chargeState != NOT_CHA && !charging) {
+    charging = true;
+    chargeStartTime = millis();  // Start timer when the charge cycle begins
+  }
+  // Optionally, reset the timer when the charge state goes back to "NOT_CHA"
+  if (chargeState == NOT_CHA && charging) {
+    charging = false;
+  }
+}
+
+void displayElapsedTime() {
+  if (charging) {
+    unsigned long elapsedMillis = millis() - chargeStartTime;
+    unsigned long totalSeconds = elapsedMillis / 1000;
+    unsigned int seconds = totalSeconds % 60;
+    unsigned int minutes = (totalSeconds / 60) % 60;
+    unsigned int hours   = totalSeconds / 3600;
+    display.print("Charge time: ");
+    display.printf("%02u:%02u:%02u", hours, minutes, seconds);
+  }
+}
+
+void handleCurrentButtons() {
+  bool plusPressed  = !digitalRead(PLUS_BUTTON);
+  bool minusPressed = !digitalRead(U0TXD_AS_MINUS_BUTTON);
+  uint16_t actual_current_limit = charger.getChargeCurrentLimit();
+  switch (chargeState) {
+    // Not charging and Constant Current share the same behavior
+    case NOT_CHA:
+      if (plusPressed && actual_current_limit < MAX_CHARGE_CURRENT_CC_24) {
+        console->println(actual_current_limit + CURRENT_STEP_CC_24);
+        charger.setChargeCurrentLimit(actual_current_limit + CURRENT_STEP_CC_24);
+      } else if (minusPressed && actual_current_limit > (MIN_CHARGE_CURRENT_CC_24)) {
+        charger.setChargeCurrentLimit(actual_current_limit - CURRENT_STEP_CC_24);
+      }
+      break;
+    case CC:
+      if (plusPressed && (charger.getVBATADC() < 23000) && actual_current_limit < MAX_CHARGE_CURRENT_CC_20) {
+        charger.setChargeCurrentLimit(actual_current_limit + CURRENT_STEP_CC_20);
+      } else if (minusPressed && charger.getVBATADC() < 23000 && actual_current_limit > MIN_CHARGE_CURRENT_CC_20) {
+        charger.setChargeCurrentLimit(charger.getChargeCurrentLimit() - CURRENT_STEP_CC_20);
+      } else if (plusPressed && charger.getVBATADC() < 24000 && charger.getChargeCurrentLimit() < MAX_CHARGE_CURRENT_CC_23) {
+        charger.setChargeCurrentLimit(charger.getChargeCurrentLimit() + CURRENT_STEP_CC_23);
+      } else if (minusPressed && charger.getVBATADC() < 24000 && charger.getChargeCurrentLimit() > MIN_CHARGE_CURRENT_CC_23) {
+        charger.setChargeCurrentLimit(charger.getChargeCurrentLimit() - CURRENT_STEP_CC_23);
+      } else if (plusPressed && charger.getChargeCurrentLimit() < MAX_CHARGE_CURRENT_CC_24) {
+        charger.setChargeCurrentLimit(charger.getChargeCurrentLimit() + CURRENT_STEP_CC_24);
+      } else if (minusPressed && charger.getChargeCurrentLimit() > MIN_CHARGE_CURRENT_CC_24) {
+        charger.setChargeCurrentLimit(charger.getChargeCurrentLimit() - CURRENT_STEP_CC_24);
+      }
+      break;
+      
+    case PRECHARGE: // Precharge
+      if (plusPressed)
+        charger.setPrechargeCurrentLimit(chargerConfig.prechargeCurrentLimit + CURRENT_STEP_PRE);
+      else if (minusPressed)
+        charger.setPrechargeCurrentLimit(chargerConfig.prechargeCurrentLimit - CURRENT_STEP_PRE);
+      break;
+
+    case CV: // Constant Voltage
+      if (plusPressed)
+        charger.setTerminationCurrentLimit(chargerConfig.terminationCurrentLimit + CURRENT_STEP_CV);
+      else if (minusPressed)
+        charger.setTerminationCurrentLimit(chargerConfig.terminationCurrentLimit - CURRENT_STEP_CV);
+      break;
+
+    default:
+      break;
+  }
+}
+
+void checkChargeCurrentConstraints() {
+  uint16_t vbat = charger.getVBATADC();
+  if (vbat < 23000 && (charger.getChargeCurrentLimit() >= (MAX_CHARGE_CURRENT_CC_20+CURRENT_STEP_CC_20/2) || charger.getChargeCurrentLimit() <= (MIN_CHARGE_CURRENT_CC_20-CURRENT_STEP_CC_20/2))) {
+    charger.setChargeCurrentLimit(DEFAULT_CHARGE_CURRENT_CC_20);
+  } else if (vbat < 24000 && (charger.getChargeCurrentLimit() >= (MAX_CHARGE_CURRENT_CC_23+CURRENT_STEP_CC_23/2) || charger.getChargeCurrentLimit() <= (MIN_CHARGE_CURRENT_CC_23-CURRENT_STEP_CC_23/2))) {
+    charger.setChargeCurrentLimit(DEFAULT_CHARGE_CURRENT_CC_23);
+  } else if ((24000 < vbat) && (vbat < 29000) && (charger.getChargeCurrentLimit() >= (MAX_CHARGE_CURRENT_CC_24+CURRENT_STEP_CC_24/2) || charger.getChargeCurrentLimit() <= (MIN_CHARGE_CURRENT_CC_24-CURRENT_STEP_CC_24/2))) {
+    charger.setChargeCurrentLimit(DEFAULT_CHARGE_CURRENT_CC_24); 
+  }
 }

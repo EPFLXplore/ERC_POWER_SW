@@ -21,22 +21,27 @@ void BQ25756E::init(const BQ25756E_Config& cfg) {
     setPrechargeCurrentLimit(cfg.prechargeCurrentLimit); // Set the precharge current limit
     setTerminationCurrentLimit(cfg.terminationCurrentLimit); // Set the termination current limit
     configurePrechargeTermination(cfg.terminationControlEnabled, cfg.fastChargeThreshold, cfg.prechargeControlEnabled); // Configure precharge and termination control
-
-    configureTopOffTimer(); // Configure the top-off timer
-    configureWatchdogTimer(); // Configure the watchdog timer
-    configureChargeSafetyTimer(); // Configure the charge safety timer
-    configureConstantVoltageTimer(); // Configure the constant voltage timer
-    setAutoRechargeThreshold(); // Set the auto-recharge threshold
+    // Timer Control Register
+    configureTopOffTimer(cfg.topOffTimer); // Configure the top-off timer
+    configureWatchdogTimer(cfg.watchdogTimer); // Configure the watchdog timer
+    configureChargeSafetyTimer(cfg.safetyTimerEnabled, cfg.safetyTimer, cfg.safetyTimerSpeed); // Configure the charge safety timer
+    // Three-Stage_Charge_Control Register
+    configureConstantVoltageTimer(cfg.constantVoltageTimer); // Configure the constant voltage timer
+    // Charger Control Register
+    setAutoRechargeThreshold(cfg.autoRechargeThreshold); // Set the auto-recharge threshold
     configureWatchdogTimerReset(); // Configure the watchdog timer reset
-    setCEpin(); // Set the CE pin
-    configureChargeBehaiorWatchdogExpires(); // Configure the charge behavior when the watchdog expires
-    setHighZmode(); // Set the high-Z mode
-    enableCharge(); // Enable charging
-
+    setCEpin(cfg.CEPinEnabled); // Set the CE pin
+    configureChargeBehaiorWatchdogExpires(cfg.ChargeBehaviorWatchdogExpired); // Configure the charge behavior when the watchdog expires
+    setHighZmode(cfg.highZModeEnabled); // Set the high-Z mode
+    enableControlledDischarge(cfg.batteryLoadEnabled); // Enable controlled discharge
+    if (cfg.chargeEnabled) {enableCharge();} else {disableCharge();}; // Enable charging
+    // Pin Control Register
     enablePins(1, 1, 1, 1); // Enable the ICHG, ILIM_HIZ, PG, and STAT pins
-    _debugPort->println(getPinControl(), HEX); // Print the pin control register
-    enablePins(0, 0, 0, 0); // Disable the ICHG, ILIM_HIZ, PG, and STAT pins
-    _debugPort->println(getPinControl(), HEX); // Print the pin control register
+    configureVACLoad(true); // Configure the VAC load
+    setPFMMode(false); // Set the PFM mode
+    setTSPinFunction(); // Set the TS pin function
+    configureADC(); // Configure the ADC
+    //configureADCChannels(); // Configure the ADC channel
 
     printChargerConfig(true); // Print the charger configuration
 }
@@ -70,10 +75,7 @@ uint16_t BQ25756E::getChargeCurrentLimit() {
 }
 
 uint16_t BQ25756E::getInputCurrentDPMLimitRegister() {
-    uint8_t high_bits = readRegister(address, BQ25756E_REG_INPUT_CURRENT_DPM_LIMIT + 1);
-    uint8_t low_bits =  readRegister(address, BQ25756E_REG_INPUT_CURRENT_DPM_LIMIT);
-    uint16_t regValue = (high_bits << 8) | low_bits;
-    return (regValue & BQ25756E_INPUT_CURRENT_DPM_LIMIT);
+    return (readRegister16(address, BQ25756E_REG_INPUT_CURRENT_DPM_LIMIT) & BQ25756E_INPUT_CURRENT_DPM_LIMIT);
 }
 
 uint16_t BQ25756E::getInputCurrentDPMLimit() {
@@ -170,19 +172,19 @@ uint8_t BQ25756E::getPrechargeTerminationControl() {
 }
 
 uint8_t BQ25756E::getTimerControl() {
-    return readRegister(address, BQ25756E_REG_TIMER_CONTROL) & BQ25756E_TIMER_CONTROL;
+    return readRegister(address, BQ25756E_REG_TIMER_CONTROL);
 }
 
 uint8_t BQ25756E::getThreeStageChageControl() {
-    return readRegister(address, BQ25756E_REG_THREE_STAGE_CHARGE_CONTROL) & BQ25756E_THREE_STAGE_CHARGE_CONTROL_CV_TMR;
+    return readRegister(address, BQ25756E_REG_THREE_STAGE_CHARGE_CONTROL);
 }
 
 uint8_t BQ25756E::getChargerControl() {
-    return readRegister(address, BQ25756E_REG_CHARGER_CONTROL) & BQ25756E_CHARGER_CONTROL_VRECHG;
+    return readRegister(address, BQ25756E_REG_CHARGER_CONTROL);
 }
 
 uint8_t BQ25756E::getPinControl() {
-    return readRegister(address, BQ25756E_REG_PIN_CONTROL) & BQ25756E_PIN_CONTROL;
+    return readRegister(address, BQ25756E_REG_PIN_CONTROL);
 }
 
 uint8_t BQ25756E::getPowerPathReverseModeControl() {
@@ -227,6 +229,12 @@ uint16_t BQ25756E::getVACMaxPowerPointDetected() {
 
 uint8_t BQ25756E::getChargerStatus1() {
     return readRegister(address, BQ25756E_REG_CHARGER_STATUS_1);
+}
+
+uint8_t BQ25756E::getChargeCycleStatus() {
+    uint8_t regVal = getChargerStatus1();
+    // According to the table, bits [2:0] of this register indicate charge cycle status
+    return regVal & BQ25756E_CHG_STATUS_1_CHARGE_STAT_2; // Mask the lower 3 bits
 }
 
 uint8_t BQ25756E::getChargerStatus2() {
@@ -274,10 +282,11 @@ uint8_t BQ25756E::getADCChannelControl() {
 }
 
 uint16_t BQ25756E::getIACADCRegister() {
-    uint8_t high_bits = readRegister(address, BQ25756E_REG_IAC_ADC + 1);
-    uint8_t low_bits =  readRegister(address, BQ25756E_REG_IAC_ADC);
-    uint16_t regValue = (high_bits << 8) | low_bits;
-    return regValue;
+    // uint8_t high_bits = readRegister(address, BQ25756E_REG_IAC_ADC + 1);
+    // uint8_t low_bits =  readRegister(address, BQ25756E_REG_IAC_ADC);
+    // uint16_t regValue = (high_bits << 8) | low_bits;
+    // return regValue;
+    return readRegister16(address, BQ25756E_REG_IAC_ADC);
 }
 
 uint16_t BQ25756E::getIACADC() {
@@ -285,10 +294,11 @@ uint16_t BQ25756E::getIACADC() {
 }
 
 uint16_t BQ25756E::getIBATADCRegister() {
-    uint8_t high_bits = readRegister(address, BQ25756E_REG_IBAT_ADC + 1);
-    uint8_t low_bits =  readRegister(address, BQ25756E_REG_IBAT_ADC);
-    uint16_t regValue = (high_bits << 8) | low_bits;
-    return regValue;
+    // uint8_t high_bits = readRegister(address, BQ25756E_REG_IBAT_ADC + 1);
+    // uint8_t low_bits =  readRegister(address, BQ25756E_REG_IBAT_ADC);
+    // uint16_t regValue = (high_bits << 8) | low_bits;
+    // return regValue;
+    return readRegister16(address, BQ25756E_REG_IBAT_ADC);
 }
 
 uint16_t BQ25756E::getIBATADC() {
@@ -296,21 +306,26 @@ uint16_t BQ25756E::getIBATADC() {
 }
 
 uint16_t BQ25756E::getVACADCRegister() {
-    uint8_t high_bits = readRegister(address, BQ25756E_REG_VAC_ADC + 1);
-    uint8_t low_bits =  readRegister(address, BQ25756E_REG_VAC_ADC);
-    uint16_t regValue = (high_bits << 8) | low_bits;
-    return regValue;
+    // uint8_t high_bits = readRegister(address, BQ25756E_REG_VAC_ADC + 1);
+    // uint8_t low_bits =  readRegister(address, BQ25756E_REG_VAC_ADC);
+    // uint16_t regValue = (high_bits << 8) | low_bits;
+    // return regValue;
+    return readRegister16(address, BQ25756E_REG_VAC_ADC);
 }
 
 uint16_t BQ25756E::getVACADC() {
     return getVACADCRegister() * 2;
 }
 
+// uint16_t BQ25756E::getVBATADCRegister() {
+//     uint8_t high_bits = readRegister(address, BQ25756E_REG_VBAT_ADC + 1);
+//     uint8_t low_bits =  readRegister(address, BQ25756E_REG_VBAT_ADC);
+//     uint16_t regValue = (high_bits << 8) | low_bits;
+//     return regValue;
+// }
+
 uint16_t BQ25756E::getVBATADCRegister() {
-    uint8_t high_bits = readRegister(address, BQ25756E_REG_VBAT_ADC + 1);
-    uint8_t low_bits =  readRegister(address, BQ25756E_REG_VBAT_ADC);
-    uint16_t regValue = (high_bits << 8) | low_bits;
-    return regValue;
+    return readRegister16(address, BQ25756E_REG_VBAT_ADC);
 }
 
 uint16_t BQ25756E::getVBATADC() {
@@ -318,10 +333,11 @@ uint16_t BQ25756E::getVBATADC() {
 }
 
 uint16_t BQ25756E::getTSADCRegister() {
-    uint8_t high_bits = readRegister(address, BQ25756E_REG_TS_ADC + 1);
-    uint8_t low_bits =  readRegister(address, BQ25756E_REG_TS_ADC);
-    uint16_t regValue = (high_bits << 8) | low_bits;
-    return regValue;
+    // uint8_t high_bits = readRegister(address, BQ25756E_REG_TS_ADC + 1);
+    // uint8_t low_bits =  readRegister(address, BQ25756E_REG_TS_ADC);
+    // uint16_t regValue = (high_bits << 8) | low_bits;
+    // return regValue;
+    return readRegister16(address, BQ25756E_REG_TS_ADC);
 }
 
 double BQ25756E::getTSADC() {
@@ -329,10 +345,11 @@ double BQ25756E::getTSADC() {
 }
 
 uint16_t BQ25756E::getVFBADCRegister() {
-    uint8_t high_bits = readRegister(address, BQ25756E_REG_VFB_ADC + 1);
-    uint8_t low_bits =  readRegister(address, BQ25756E_REG_VFB_ADC);
-    uint16_t regValue = (high_bits << 8) | low_bits;
-    return regValue;
+    // uint8_t high_bits = readRegister(address, BQ25756E_REG_VFB_ADC + 1);
+    // uint8_t low_bits =  readRegister(address, BQ25756E_REG_VFB_ADC);
+    // uint16_t regValue = (high_bits << 8) | low_bits;
+    // return regValue;
+    return readRegister16(address, BQ25756E_REG_VFB_ADC);
 }
 
 uint16_t BQ25756E::getVFBADC() {
@@ -374,9 +391,6 @@ void BQ25756E::setChargeVoltageLimit(uint16_t voltage_mV) {
     // Use the defined bit mask for voltage limit (lower 5 bits)
     uint8_t registerValue = regValue & BQ25756E_CHG_VOLTAGE_LIMIT;
     // Write the 16-bit value to the Charge Voltage Limit register
-    _debugPort->println("New value:");
-    print2BytesAsBinary(registerValue);
-    _debugPort->println("");
     writeRegister(address, BQ25756E_REG_CHARGE_VOLTAGE_LIMIT, registerValue);
 }
 
@@ -393,16 +407,16 @@ void BQ25756E::setChargeCurrentLimit(uint16_t current_mA) {
         // Assign a safe default value
         current_mA = minCurrent;
     }
-        // Compute the 9-bit register value (step = 50mA)
-        uint16_t regValue = (current_mA / 50) << 2;  // Align with bits 10:2
-
-        // Read the current register value
-        uint16_t currentRegisterValue = readRegister16(address, BQ25756E_REG_CHARGE_CURRENT_LIMIT);
-        // Preserve reserved bits (mask out only bits 10:2)
-        currentRegisterValue &= ~BQ25756E_CHG_CURRENT_LIMIT;  // Clear bits 10:2
-        currentRegisterValue |= regValue; // Set new charge current limit
-        // Write the modified value back to the register
-        writeRegister16(address, BQ25756E_REG_CHARGE_CURRENT_LIMIT, currentRegisterValue);
+    config.chargeCurrentLimit = current_mA;
+    // Compute the 9-bit register value (step = 50mA)
+    uint16_t regValue = (current_mA / 50) << 2;  // Align with bits 10:2
+    // Read the current register value
+    uint16_t currentRegisterValue = readRegister16(address, BQ25756E_REG_CHARGE_CURRENT_LIMIT);
+    // Preserve reserved bits (mask out only bits 10:2)
+    currentRegisterValue &= ~BQ25756E_CHG_CURRENT_LIMIT;  // Clear bits 10:2
+    currentRegisterValue |= regValue; // Set new charge current limit
+    // Write the modified value back to the register
+    writeRegister16(address, BQ25756E_REG_CHARGE_CURRENT_LIMIT, currentRegisterValue);
 }
 
 void BQ25756E::setInputCurrentLimit(uint16_t current_mA) {
@@ -457,6 +471,7 @@ void BQ25756E::setPrechargeCurrentLimit(uint16_t current_mA) {
         Serial.print("Error: Requested precharge current limit out of range (250mA - 10000A)");
         current_mA = 250; // Assign a safe default value
     }
+    config.prechargeCurrentLimit = current_mA;
     // Compute the 9-bit register value (step = 50mA)
     uint16_t regValue = (current_mA / 50) << 2; // Align with bits 9:2
 
@@ -474,6 +489,7 @@ void BQ25756E::setTerminationCurrentLimit(uint16_t current_mA) {
         Serial.print("Error: Requested termination current limit out of range (250mA - 10000mA)");
         current_mA = 250; // Assign a safe default value
     }
+    config.terminationCurrentLimit = current_mA;
     // Compute the 9-bit register value (step = 50mA)
     uint16_t regValue = (current_mA / 50) << 2; // Align with bits 9:2
 
@@ -502,7 +518,7 @@ void BQ25756E::configureWatchdogTimer(uint8_t watchdog_timer) {
 
 void BQ25756E::configureChargeSafetyTimer(bool enabble_safe_timer, uint8_t safety_timer, bool speed_during_DPM) {
     modifyRegister(address, BQ25756E_REG_TIMER_CONTROL, BQ25756E_TIMER_CONTROL_EN_CHG_TMR, enabble_safe_timer);
-    modifyRegisterBits(address, BQ25756E_REG_TIMER_CONTROL, BQ25756E_TIMER_CONTROL_EN_CHG_TMR, safety_timer << 1);
+    modifyRegisterBits(address, BQ25756E_REG_TIMER_CONTROL, BQ25756E_TIMER_CONTROL_CHG_TMR, safety_timer << 1);
     modifyRegister(address, BQ25756E_REG_TIMER_CONTROL, BQ25756E_TIMER_CONTROL_EN_TMR2X, speed_during_DPM);
 }
 
@@ -521,7 +537,7 @@ void BQ25756E::configureWatchdogTimerReset(bool enable_watchdog_reset) {
 }
 void BQ25756E::setCEpin(bool enable_CE_pin) {
     // Set the CE pin to enable the charger
-    modifyRegister(address, BQ25756E_REG_CHARGER_CONTROL, BQ25756E_CHARGER_CONTROL_DIS_CE_PIN, enable_CE_pin);
+    modifyRegister(address, BQ25756E_REG_CHARGER_CONTROL, BQ25756E_CHARGER_CONTROL_DIS_CE_PIN, !enable_CE_pin);
 }
 
 void BQ25756E::configureChargeBehaiorWatchdogExpires(bool disable_charge) {
@@ -541,25 +557,52 @@ void BQ25756E::enableControlledDischarge(bool enable_discharge) {
 
 void BQ25756E::enableCharge() {
     // Enable the charger
+    config.chargeEnabled = true;
     modifyRegister(address, BQ25756E_REG_CHARGER_CONTROL, BQ25756E_CHARGER_CONTROL_EN_CHG, true);
 }
 
 void BQ25756E::disableCharge() {
     // Disable the charger
+    config.chargeEnabled = false;
     modifyRegister(address, BQ25756E_REG_CHARGER_CONTROL, BQ25756E_CHARGER_CONTROL_EN_CHG, false);
 }
 
 void BQ25756E::enablePins(bool enable_ICHG, bool enableILIM_HIZ, bool enable_PG, bool enable_STAT) {
     // Enable the ICHG, ILIM_HIZ, PG, and STAT pins
-    uint8_t pinControl = enable_ICHG << 3 | enableILIM_HIZ << 2 | enable_PG << 1 | enable_STAT;
+    uint8_t pinControl = enable_ICHG << 7 | enableILIM_HIZ << 6 | !enable_PG << 5 | !enable_STAT << 4;
     writeRegister(address, BQ25756E_REG_PIN_CONTROL, pinControl);
-    // modifyRegister(address, BQ25756E_REG_PIN_CONTROL, BQ25756E_PIN_CONTROL_EN_ICHG_PIN, enable_ICHG);
-    // modifyRegister(address, BQ25756E_REG_PIN_CONTROL, BQ25756E_PIN_CONTROL_EN_ILIM_HIZ_PIN, enableILIM_HIZ);
-    // modifyRegister(address, BQ25756E_REG_PIN_CONTROL, BQ25756E_PIN_CONTROL_DIS_PG_PIN, enable_PG);
-    // modifyRegister(address, BQ25756E_REG_PIN_CONTROL, BQ25756E_PIN_CONTROL_DIS_STAT_PINS, enable_STAT);
 }
 
+void BQ25756E::resetRegisters() {
+    // Reset all registers to default values
+    modifyRegister(address, BQ25756E_REG_POWER_PATH_REVERSE_MODE_CONTROL, BQ25756E_POWER_PATH_REVERSE_MODE_CONTROL_REG_RST, true);
+}
 
+void BQ25756E::configureVACLoad(bool enable_load) {
+    // Enable the VAC load
+    modifyRegister(address, BQ25756E_REG_POWER_PATH_REVERSE_MODE_CONTROL, BQ25756E_POWER_PATH_REVERSE_MODE_CONTROL_EN_IAC_LOAD, enable_load);
+}
+
+void BQ25756E::setPFMMode(bool enable_PFM) {
+    // Enable PFM mode
+    modifyRegister(address, BQ25756E_REG_POWER_PATH_REVERSE_MODE_CONTROL, BQ25756E_POWER_PATH_REVERSE_MODE_CONTROL_EN_PFM, enable_PFM);
+}
+
+void BQ25756E::setReverseMode(bool enable_reverse_mode) {
+    // Enable reverse mode
+    modifyRegister(address, BQ25756E_REG_POWER_PATH_REVERSE_MODE_CONTROL, BQ25756E_POWER_PATH_REVERSE_MODE_CONTROL_EN_REV, enable_reverse_mode);
+}
+
+void BQ25756E::setTSPinFunction(bool enable_TS) {
+    // Set the TS pin function
+    modifyRegister(address, BQ25756E_REG_TS_CHARGING_REGION_BEHAVIOR_CONTROL, BQ25756E_TS_CHARGING_REGION_BEHAVIOR_EN_TS, enable_TS);
+}
+
+void BQ25756E::configureADC(bool enable_ADC, bool one_shot, uint8_t sample_speed, bool running_avg, bool init_avg) {
+
+    uint8_t adcControl = enable_ADC << 7 | one_shot << 6 | sample_speed << 4 | running_avg << 3 | init_avg << 2;
+    writeRegister(address, BQ25756E_REG_ADC_CONTROL, adcControl);
+}
 
 void BQ25756E::chargPrint(const char* msg) {
     #ifdef DRV8214_PLATFORM_ARDUINO
@@ -577,318 +620,133 @@ void BQ25756E::chargPrint(const char* msg) {
 
 void BQ25756E::printChargerConfig(bool initial_config) 
 {
-    char buffer[128];
-
-    // -------------------------------------------------------------------------
-    // Helper macro to make printing cleaner. It prints a 16-bit register/value 
-    // pair (Reg hex, binary + interpreted value in mV or mA).
-    // For 16-bit registers that represent a voltage in mV, use "mV" for units.
-    // For 16-bit registers that represent a current in mA, use "mA".
-    // If you have some other type of data, change the units accordingly.
-    // -------------------------------------------------------------------------
-    #define PRINT_16BIT_PAIR(regLabel, regVal, valLabel, valVal, units) do {          \
-        /* First line: two registers + values side by side */                         \
-        snprintf(buffer, sizeof(buffer),                                              \
-            "%s Reg: 0x%04X, %s: %u %s | ",                                           \
-            (regLabel), (unsigned)(regVal), (valLabel), (unsigned)(valVal), (units)); \
-        chargPrint(buffer);                                                           \
-    } while(0)
-
-    #define PRINT_16BIT_BINARY(regVal) do {                     \
-        /* Print binary on a new line, with a small label */    \
-        chargPrint(" bin: ");                                   \
-        print2BytesAsBinary(regVal);                            \
-    } while(0)
-
-    // -------------------------------------------------------------------------
-    // For 8-bit registers that only have a register read (no separate "value" 
-    // function), we'll display 0xXX plus the binary. We'll group them 3 per line.
-    // -------------------------------------------------------------------------
-    #define PRINT_8BIT_GROUP(label, regVal) do {                        \
-        snprintf(buffer, sizeof(buffer), "%s: 0x%02X ", (label), (unsigned)(regVal)); \
-        chargPrint(buffer);                                             \
-    } while(0)
-
-    #define PRINT_8BIT_BINARY(label, regVal) do {                       \
-        snprintf(buffer, sizeof(buffer), "   %s bin: ", (label));       \
-        chargPrint(buffer);                                             \
-        printByteAsBinary(regVal);                                      \
-    } while(0)
-
     chargPrint("----- CHARGER CONFIGURATION REGISTERS -----\n");
-
-    // =========================================================================
-    // 1) 16-bit registers in pairs (to keep lines manageable)
-    // =========================================================================
-    // Pair 1: ChargeVoltageLimit & ChargeCurrentLimit
-    {
-      uint16_t regA  = getChargeVoltageLimitRegister();
-      uint16_t valA  = getChargeVoltageLimit();        // in mV
-      uint16_t regB  = getChargeCurrentLimitRegister();
-      uint16_t valB  = getChargeCurrentLimit();        // in mA
-
-      PRINT_16BIT_PAIR("ChargeVoltageLimit", regA, "Value", valA, "mV");
-      PRINT_16BIT_PAIR("ChargeCurrentLimit", regB, "Value", valB, "mA");
-      chargPrint("\n  ");
-      PRINT_16BIT_BINARY(regA);
-      chargPrint("  ");
-      PRINT_16BIT_BINARY(regB);
-      chargPrint("\n\n");
-    }
-
-    // Pair 2: InputCurrentDPMLimit & InputVoltageDPMLimit
-    {
-      uint16_t regA  = getInputCurrentDPMLimitRegister();
-      uint16_t valA  = getInputCurrentDPMLimit();      // in mA
-      uint16_t regB  = getInputVoltageDPMLimitRegister();
-      uint16_t valB  = getInputVoltageDPMLimit();      // in mV
-
-      PRINT_16BIT_PAIR("InputCurrentDPM", regA, "Value", valA, "mA");
-      PRINT_16BIT_PAIR("InputVoltageDPM", regB, "Value", valB, "mV");
-      chargPrint("\n  ");
-      PRINT_16BIT_BINARY(regA);
-      chargPrint("  ");
-      PRINT_16BIT_BINARY(regB);
-      chargPrint("\n\n");
-    }
-
-    // Pair 3: ReverseModeInputCurrentLimit & ReverseModeInputVoltageLimit
-    {
-      uint16_t regA  = getReverseModeInputCurrentLimitRegister();
-      uint16_t valA  = getReverseModeInputCurrentLimit();  // in mA
-      uint16_t regB  = getReverseModeInputVoltageLimitRegister();
-      uint16_t valB  = getReverseModeInputVoltageLimit();  // in mV
-
-      PRINT_16BIT_PAIR("RevModeInCurrLim", regA, "Value", valA, "mA");
-      PRINT_16BIT_PAIR("RevModeInVoltLim", regB, "Value", valB, "mV");
-      chargPrint("\n  ");
-      PRINT_16BIT_BINARY(regA);
-      chargPrint("  ");
-      PRINT_16BIT_BINARY(regB);
-      chargPrint("\n\n");
-    }
-
-    // Pair 4: PrechargeCurrentLimit & TerminationCurrentLimit
-    {
-      uint16_t regA  = getPrechargeCurrentLimitRegister();
-      uint16_t valA  = getPrechargeCurrentLimit();          // in mA
-      uint16_t regB  = getTerminationCurrentLimitRegister();
-      uint16_t valB  = getTerminationCurrentLimit();        // in mA
-
-      PRINT_16BIT_PAIR("PrechargeCurrent", regA, "Value", valA, "mA");
-      PRINT_16BIT_PAIR("TerminationCurrent", regB, "Value", valB, "mA");
-      chargPrint("\n  ");
-      PRINT_16BIT_BINARY(regA);
-      chargPrint("  ");
-      PRINT_16BIT_BINARY(regB);
-      chargPrint("\n\n");
-    }
-
-    // Pair 5: VACMaxPowerPointDetected & IACADC
-    {
-      uint16_t regA  = getVACMaxPowerPointDetectedRegister();
-      uint16_t valA  = getVACMaxPowerPointDetected();       // unknown exact unit, assume mV or similar
-      uint16_t regB  = getIACADCRegister();
-      uint16_t valB  = getIACADC();                         // often an ADC reading
-
-      PRINT_16BIT_PAIR("VACMaxPwrPtDet", regA, "Value", valA, "");
-      PRINT_16BIT_PAIR("IACADC", regB, "Value", valB, "");
-      chargPrint("\n  ");
-      PRINT_16BIT_BINARY(regA);
-      chargPrint("  ");
-      PRINT_16BIT_BINARY(regB);
-      chargPrint("\n\n");
-    }
-
-    // Pair 6: IBATADC & VACADC
-    {
-      uint16_t regA = getIBATADCRegister();
-      uint16_t valA = getIBATADC();
-      uint16_t regB = getVACADCRegister();
-      uint16_t valB = getVACADC();
-
-      PRINT_16BIT_PAIR("IBATADC", regA, "Value", valA, "");
-      PRINT_16BIT_PAIR("VACADC", regB, "Value", valB, "");
-      chargPrint("\n  ");
-      PRINT_16BIT_BINARY(regA);
-      chargPrint("  ");
-      PRINT_16BIT_BINARY(regB);
-      chargPrint("\n\n");
-    }
-
-    // Pair 7: VBATADC & TSADC
-    {
-      uint16_t regA = getVBATADCRegister();
-      uint16_t valA = getVBATADC();
-      uint16_t regB = getTSADCRegister();
-      // getTSADC() returns a double, so handle separately
-      double   valB = getTSADC();
-
-      PRINT_16BIT_PAIR("VBATADC", regA, "Value", valA, "");
-      // We'll print TSADC as the raw 16-bit plus the double
-      snprintf(buffer, sizeof(buffer), "TSADC Reg: 0x%04X, Value: %.2f ", (unsigned)regB, valB);
-      chargPrint(buffer);
-      chargPrint("\n  ");
-      PRINT_16BIT_BINARY(regA);
-      chargPrint("  TSADC bin: ");
-      print2BytesAsBinary(regB);
-      chargPrint("\n\n");
-    }
-
-    // Last 16-bit alone: VFBADC
-    {
-      uint16_t regA = getVFBADCRegister();
-      uint16_t valA = getVFBADC();
-
-      snprintf(buffer, sizeof(buffer), "VFBADC Reg: 0x%04X, Value: %u ", (unsigned)regA, (unsigned)valA);
-      chargPrint(buffer);
-      chargPrint("\n  VFBADC bin: ");
-      print2BytesAsBinary(regA);
-      chargPrint("\n\n");
-    }
-
-    // =========================================================================
-    // 2) 8-bit registers, group 3 per line
-    // =========================================================================
-    chargPrint("----- 8-bit Charger/Control Registers -----\n\n");
-
-    {
-      uint8_t r1 = getPrechargeTerminationControl();
-      uint8_t r2 = getTimerControl();
-      uint8_t r3 = getThreeStageChageControl();
-      PRINT_8BIT_GROUP("PreTermCtrl", r1);
-      PRINT_8BIT_GROUP("TimerCtrl",   r2);
-      PRINT_8BIT_GROUP("3StageChg",   r3);
-      chargPrint("\n");
-      PRINT_8BIT_BINARY("PreTermCtrl", r1);
-      PRINT_8BIT_BINARY("TimerCtrl",   r2);
-      PRINT_8BIT_BINARY("3StageChg",   r3);
-      chargPrint("\n");
-    }
-
-    {
-      uint8_t r1 = getChargerControl();
-      uint8_t r2 = getPinControl();
-      uint8_t r3 = getPowerPathReverseModeControl();
-      PRINT_8BIT_GROUP("ChargerCtrl", r1);
-      PRINT_8BIT_GROUP("PinCtrl",     r2);
-      PRINT_8BIT_GROUP("PwrPathRev",  r3);
-      chargPrint("\n");
-      PRINT_8BIT_BINARY("ChargerCtrl", r1);
-      PRINT_8BIT_BINARY("PinCtrl",     r2);
-      PRINT_8BIT_BINARY("PwrPathRev",  r3);
-      chargPrint("\n");
-    }
-
-    {
-      uint8_t r1 = getMPPTControl();
-      uint8_t r2 = getTSChargingThresholdControl();
-      uint8_t r3 = getTSChargingRegionBehaviorControl();
-      PRINT_8BIT_GROUP("MPPTCtrl",    r1);
-      PRINT_8BIT_GROUP("TSChgThresh", r2);
-      PRINT_8BIT_GROUP("TSChgRegBeh", r3);
-      chargPrint("\n");
-      PRINT_8BIT_BINARY("MPPTCtrl",    r1);
-      PRINT_8BIT_BINARY("TSChgThresh", r2);
-      PRINT_8BIT_BINARY("TSChgRegBeh", r3);
-      chargPrint("\n");
-    }
-
-    {
-      uint8_t r1 = getTSReverseModeThresholdControl();
-      uint8_t r2 = getReverseUndervoltageControl();
-      // we'll group only 2 here to keep it neat
-      PRINT_8BIT_GROUP("TSRevModeTh", r1);
-      PRINT_8BIT_GROUP("RevUndervolt", r2);
-      chargPrint("\n");
-      PRINT_8BIT_BINARY("TSRevModeTh", r1);
-      PRINT_8BIT_BINARY("RevUndervolt", r2);
-      chargPrint("\n\n");
-    }
-
-    // Charger status registers (8-bit)
-    {
-      uint8_t r1 = getChargerStatus1();
-      uint8_t r2 = getChargerStatus2();
-      uint8_t r3 = getChargerStatus3();
-      PRINT_8BIT_GROUP("ChgStat1", r1);
-      PRINT_8BIT_GROUP("ChgStat2", r2);
-      PRINT_8BIT_GROUP("ChgStat3", r3);
-      chargPrint("\n");
-      PRINT_8BIT_BINARY("ChgStat1", r1);
-      PRINT_8BIT_BINARY("ChgStat2", r2);
-      PRINT_8BIT_BINARY("ChgStat3", r3);
-      chargPrint("\n\n");
-    }
-
-    // Fault and Flag registers
-    {
-      uint8_t r1 = getFaultStatus();
-      uint8_t r2 = getChargerFlag1();
-      uint8_t r3 = getChargerFlag2();
-      PRINT_8BIT_GROUP("FaultStat",  r1);
-      PRINT_8BIT_GROUP("ChgFlag1",   r2);
-      PRINT_8BIT_GROUP("ChgFlag2",   r3);
-      chargPrint("\n");
-      PRINT_8BIT_BINARY("FaultStat",  r1);
-      PRINT_8BIT_BINARY("ChgFlag1",   r2);
-      PRINT_8BIT_BINARY("ChgFlag2",   r3);
-      chargPrint("\n\n");
-    }
-
-    {
-      uint8_t r1 = getFaultFlag();
-      uint8_t r2 = getChargerMask1();
-      uint8_t r3 = getChargerMask2();
-      PRINT_8BIT_GROUP("FaultFlag",   r1);
-      PRINT_8BIT_GROUP("ChgMask1",    r2);
-      PRINT_8BIT_GROUP("ChgMask2",    r3);
-      chargPrint("\n");
-      PRINT_8BIT_BINARY("FaultFlag",   r1);
-      PRINT_8BIT_BINARY("ChgMask1",    r2);
-      PRINT_8BIT_BINARY("ChgMask2",    r3);
-      chargPrint("\n\n");
-    }
-
-    {
-      uint8_t r1 = getFaultMask();
-      uint8_t r2 = getADCControl();
-      uint8_t r3 = getADCChannelControl();
-      PRINT_8BIT_GROUP("FaultMask",  r1);
-      PRINT_8BIT_GROUP("ADCControl", r2);
-      PRINT_8BIT_GROUP("ADCChanCtl", r3);
-      chargPrint("\n");
-      PRINT_8BIT_BINARY("FaultMask",  r1);
-      PRINT_8BIT_BINARY("ADCControl", r2);
-      PRINT_8BIT_BINARY("ADCChanCtl", r3);
-      chargPrint("\n\n");
-    }
-
-    // Gate driver / part info
-    {
-      uint8_t r1 = getGateDriverStrengthControl();
-      uint8_t r2 = getGateDriverDeadTimeControl();
-      uint8_t r3 = getPartInformation();
-      PRINT_8BIT_GROUP("GateDrvStr",  r1);
-      PRINT_8BIT_GROUP("GateDrvDT",   r2);
-      PRINT_8BIT_GROUP("PartInfo",    r3);
-      chargPrint("\n");
-      PRINT_8BIT_BINARY("GateDrvStr",  r1);
-      PRINT_8BIT_BINARY("GateDrvDT",   r2);
-      PRINT_8BIT_BINARY("PartInfo",    r3);
-      chargPrint("\n\n");
-    }
-
-    // Reverse mode battery discharge current (8-bit)
-    {
-      uint8_t r1 = getReverseModeBatteryDischargeCurrent();
-      snprintf(buffer, sizeof(buffer), "ReverseModeBattDisCurr: 0x%02X\n", (unsigned)r1);
-      chargPrint(buffer);
-      PRINT_8BIT_BINARY("ReverseModeBattDisCurr", r1);
-      chargPrint("\n");
-    }
-
-    chargPrint("----- End of Charger Configuration -----\n");
+    chargPrint("Charge Voltage Limit: ");
+    print2BytesAsBinary(getChargeVoltageLimitRegister());
+    chargPrint("(");
+    _debugPort->print(getChargeVoltageLimit());
+    chargPrint(" mV) ");
+    chargPrint("Charge Current Limit: ");
+    print2BytesAsBinary(getChargeCurrentLimitRegister());
+    chargPrint("(");
+    _debugPort->print(getChargeCurrentLimit());
+    chargPrint(" mA) ");
+    chargPrint("Input Current DPM Limit: ");
+    print2BytesAsBinary(getInputCurrentDPMLimitRegister());
+    chargPrint("(");
+    _debugPort->print(getInputCurrentDPMLimit());
+    chargPrint(" mA)\n");
+    chargPrint("Input Voltage DPM Limit: ");
+    print2BytesAsBinary(getInputVoltageDPMLimitRegister());
+    chargPrint("(");
+    _debugPort->print(getInputVoltageDPMLimit());
+    chargPrint(" mV) ");
+    chargPrint("Precharge Current Limit: ");
+    print2BytesAsBinary(getPrechargeCurrentLimitRegister());
+    chargPrint("(");
+    _debugPort->print(getPrechargeCurrentLimit());
+    chargPrint(" mA) ");
+    chargPrint("Termination Current Limit: ");
+    print2BytesAsBinary(getTerminationCurrentLimitRegister());
+    chargPrint("(");
+    _debugPort->print(getTerminationCurrentLimit());
+    chargPrint(" mA)\n");
+    chargPrint("Precharge Termination Control: ");
+    printByteAsBinary(getPrechargeTerminationControl());
+    chargPrint("- Timer Control: ");
+    printByteAsBinary(getTimerControl());
+    chargPrint("- Three-Stage Charge Control: ");
+    printByteAsBinary(getThreeStageChageControl());
+    chargPrint("- Charger Control: ");
+    printByteAsBinary(getChargerControl());
+    chargPrint("- Pin Control: ");
+    printByteAsBinary(getPinControl());
+    chargPrint("\n");
+    chargPrint("Power Path Reverse Mode Control: ");
+    printByteAsBinary(getPowerPathReverseModeControl());;
+    chargPrint("MPPT Control: ");
+    printByteAsBinary(getMPPTControl());
+    chargPrint(" - TS Charging Threshold Control: ");
+    printByteAsBinary(getTSChargingThresholdControl());
+    chargPrint(" - TS Charging Region Behavior Control: ");
+    printByteAsBinary(getTSChargingRegionBehaviorControl());
+    chargPrint("\n");
+    chargPrint("TS Reverse Mode Threshold Control: ");
+    printByteAsBinary(getTSReverseModeThresholdControl());
+    chargPrint(" - Reverse Undervoltage Control: ");
+    printByteAsBinary(getReverseUndervoltageControl());
+    chargPrint("\n");
+    chargPrint("VAC Max Power Point Detected: ");
+    print2BytesAsBinary(getVACMaxPowerPointDetectedRegister());
+    chargPrint("(");
+    _debugPort->print(getVACMaxPowerPointDetected());
+    chargPrint(" mV) ");
+    chargPrint("Charger Status 1: ");
+    printByteAsBinary(getChargerStatus1());
+    chargPrint("Charger Status 2: ");
+    printByteAsBinary(getChargerStatus2());
+    chargPrint("Charger Status 3: ");
+    printByteAsBinary(getChargerStatus3());
+    chargPrint("Fault Status: ");
+    printByteAsBinary(getFaultStatus());
+    chargPrint("\n");
+    chargPrint("Charger Flag 1: ");
+    printByteAsBinary(getChargerFlag1());
+    chargPrint("Charger Flag 2: ");
+    printByteAsBinary(getChargerFlag2());
+    chargPrint("Fault Flag: ");
+    printByteAsBinary(getFaultFlag());
+    chargPrint("Charger Mask 1: ");
+    printByteAsBinary(getChargerMask1());
+    chargPrint("Charger Mask 2: ");
+    printByteAsBinary(getChargerMask2());
+    chargPrint("Fault Mask: ");
+    printByteAsBinary(getFaultMask());
+    chargPrint("\n");
+    chargPrint("ADC Control: ");
+    printByteAsBinary(getADCControl());
+    chargPrint("ADC Channel Control: ");
+    printByteAsBinary(getADCChannelControl());
+    chargPrint("IAC ADC: ");
+    print2BytesAsBinary(getIACADCRegister());
+    chargPrint("(");
+    _debugPort->print(getIACADC());
+    chargPrint(" mA) ");
+    chargPrint("IBAT ADC: ");
+    print2BytesAsBinary(getIBATADCRegister());
+    chargPrint("(");
+    _debugPort->print(getIBATADC());
+    chargPrint(" mA) ");
+    chargPrint("VAC ADC: ");
+    print2BytesAsBinary(getVACADCRegister());
+    chargPrint("(");
+    _debugPort->print(getVACADC());
+    chargPrint(" mV) ");
+    chargPrint("\n");
+    chargPrint("VBAT ADC: ");
+    print2BytesAsBinary(getVBATADCRegister());
+    chargPrint("(");
+    _debugPort->print(getVBATADC());
+    chargPrint(" mV) ");
+    chargPrint("TS ADC: ");
+    print2BytesAsBinary(getTSADCRegister());
+    chargPrint("(");
+    _debugPort->print(getTSADC());
+    chargPrint(" C) ");
+    chargPrint("VFB ADC: ");
+    print2BytesAsBinary(getVFBADCRegister());
+    chargPrint("(");
+    _debugPort->print(getVFBADC());
+    chargPrint(" mV)\n");
+    chargPrint("Gate Driver Strength Control: ");
+    printByteAsBinary(getGateDriverStrengthControl());
+    chargPrint("Gate Driver Dead Time Control: ");
+    printByteAsBinary(getGateDriverDeadTimeControl());
+    chargPrint("Part Information: ");
+    printByteAsBinary(getPartInformation());
+    chargPrint("Reverse Mode Battery Discharge Current: ");
+    printByteAsBinary(getReverseModeBatteryDischargeCurrent());
+    chargPrint("\n\n");
 }
 
 

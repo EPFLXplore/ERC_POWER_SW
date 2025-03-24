@@ -241,7 +241,7 @@
 // -----------------------------------------------------------------------------
 // REG_MPPT_CONTROL (0x1A) - MPPT Control Register
 // -----------------------------------------------------------------------------
-#define BQ25756E_MPPT_CONTROL                      0xC8  // Bit 7-0: MPPT control register
+#define BQ25756E_MPPT_CONTROL                      0x87  // Bit 7-0: MPPT control register
 #define BQ25756E_MPPT_CONTROL_FORCE_SWEEP          0x80  // Bit 7: Force Full Panel Sweep and reset MPPT timers (auto-clear) 0b = Normal, 1b = Start full panel sweep
 // Bits 6-3 are reserved
 #define BQ25756E_MPPT_CONTROL_FULL_SWEEP_TMR_MASK  0x06  // Bits 2:1: Full Panel Sweep timer control: 00b = 3 min, 01b = 10 min, 10b = 15 min, 11b = 20 min
@@ -549,18 +549,6 @@
 #define BQ25756E_EN_CONV_FAST_TRANSIENT 0x02   // Bit 1: Enable converter fast transient response
 // Bit 0 is reserved
 
-
-// --- ENUMERATIONS ---
-// Example charge state enumeration based on Charger Status 1
-enum ChargeState {
-    CHARGE_STATE_NOT_CHARGING = 0,
-    CHARGE_STATE_TRICKLE,
-    CHARGE_STATE_PRECHARGE,
-    CHARGE_STATE_FASTCHARGE,
-    CHARGE_STATE_TAPER,
-    CHARGE_STATE_CHARGE_DONE
-};
-
 // Additional enums (e.g., for timer settings or MPPT modes) can be added here
 
 // --- CONFIGURATION STRUCTURE ---
@@ -572,9 +560,22 @@ struct BQ25756E_Config {
     uint16_t prechargeCurrentLimit;     // in mA; precharge current regulation limit
     uint16_t terminationCurrentLimit;   // in mA; termination current limit
     bool terminationControlEnabled;     // Enable or disable termination current control
-    
     uint8_t fastChargeThreshold;        // 2-bit termination threshold for fast charge: 00b = 30% x VFB_REG 01b = 55% x VFB_REG 10b = 66.7% x VFB_REG 11b = 71.4% x VFB_REG
     bool prechargeControlEnabled;       // Enable or disable precharge current control
+    uint8_t topOffTimer;                // 2-bit top-off timer control: 00b = 0 min 01b = 5 min 10b = 10 min 11b = 15 min
+    uint8_t watchdogTimer;              // 2-bit watchdog timer control: 00b = 40s 01b = 80s 10b = 160s 11b = 320s
+    bool safetyTimerEnabled;            // Enable or disable charge safety timer
+    uint8_t safetyTimer;                // 2-bit charge safety timer control: 00b = 5 min 01b = 10 min 10b = 15 min 11b = 20 min
+    bool safetyTimerSpeed;              // Enable or disable fast charge speed during DPM
+    uint8_t constantVoltageTimer;       // 4-bit constant voltage timer control: 0000b = 0 min 0001b = 5 min 0010b = 10 min ... 1111b = 75 min
+    uint8_t autoRechargeThreshold;      // 2-bit auto-recharge threshold control: 00b = 0% 01b = 5% 10b = 10% 11b = 15%
+    bool watchdogTimerResetEnabled;     // Enable or disable watchdog timer reset
+    bool CEPinEnabled;                  // Enable or disable CE pin control
+    bool ChargeBehaviorWatchdogExpired; // Control charge behavior when watchdog timer expires
+    bool highZModeEnabled;              // Enable or disable high-Z mode
+    bool batteryLoadEnabled;            // Enable or disable battery load
+    bool chargeEnabled;                 // Enable or disable charging
+
     bool enableMPPT;                    // Enable or disable MPPT control
     bool verbose;                       // Enable verbose debug output
 
@@ -651,6 +652,7 @@ public:
     uint16_t getVACMaxPowerPointDetected();
 
     uint8_t  getChargerStatus1();
+    uint8_t  getChargeCycleStatus();
     uint8_t  getChargerStatus2();
     uint8_t  getChargerStatus3();
     uint8_t  getFaultStatus();
@@ -707,7 +709,13 @@ public:
     void enableCharge();
     void disableCharge();
     void enablePins(bool enable_ICHG = true, bool enableILIM_HIZ = true, bool enable_PG = true, bool enable_STAT = true);
-    //void configurePins
+    void resetRegisters();
+    void configureVACLoad(bool enable_load = false);
+    void setPFMMode(bool enable_PFM = false);
+    void setReverseMode(bool enable_reverse = false);
+    void setTSPinFunction(bool enable_TS = false);
+    void configureADC(bool enable_ADC = true, bool one_shot = false, uint8_t sample_speed = 0b00, bool running_avg = true, bool init_avg = false);
+    void configureADCChannel(bool enable_IAC = true, bool enable_IBAT = true, bool enable_VAC = true, bool enable_VBAT = true, bool enable_TS = true, bool enable_VFB = true);
 
     // --- Other Functions ---
     void printChargerConfig(bool initial_config = false);

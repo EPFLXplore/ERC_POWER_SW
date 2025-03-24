@@ -183,6 +183,11 @@
  include/I2C.h \
  /Users/theoh/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src/Wire.h \
  /Users/theoh/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal.h \
+ include/LedManager.h \
+ /Users/theoh/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/driver/include/driver/ledc.h \
+ /Users/theoh/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/hal/include/hal/ledc_types.h \
+ /Users/theoh/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/driver/include/driver/periph_ctrl.h \
+ /Users/theoh/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/soc/esp32s3/include/soc/periph_defs.h \
  .pio/libdeps/esp32-s3-devkitc-1/Adafruit\ GFX\ Library/Adafruit_GFX.h \
  /Users/theoh/.platformio/packages/framework-arduinoespressif32/cores/esp32/Print.h \
  .pio/libdeps/esp32-s3-devkitc-1/Adafruit\ GFX\ Library/gfxfont.h \
