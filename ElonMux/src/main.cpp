@@ -72,7 +72,7 @@
 #define OLED_ADDRESS 0x3C // 7-bit I2C address for the OLED display (0x78 or 0x7A for 8-bit) 
 
 // Function declarations
-void initializeConsole(unsigned long baudRate = 115200, unsigned long timeoutMs = 2000);
+void initializeConsole(unsigned long baudRate = 115200, unsigned long timeoutMs = 1500);
 void setupGPIOs();
 void updateDisplay();
 void getCurrents();
@@ -83,6 +83,7 @@ void updateChargeState();
 void displayElapsedTime();
 void handleCurrentButtons();
 void checkChargeCurrentConstraints();
+void get_connectors_status();
 
 // Creat a BQ25756E object
 BQ25756E charger(BQ25756E_ADDRESS, SWITCHING_FREQUENCY, MAX_CHARGE_CURRENT, MAX_INPUT_CURRENT, MIN_INPUT_VOLTAGE, MAX_INPUT_VOLTAGE);
@@ -125,6 +126,10 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &myWire, OLED_RESET);
 LedManager led;
 
 /* ---------------------------------- Global variables ---------------------------------- */
+// Actual PCB connections
+bool supply_connected = false;
+bool battery_discharge_connected = false;
+bool no_outputs = false;
 // Global variables for power path currents
 float BAT_CURRENT = 0.0;
 float SUPPLY_CURRENT = 0.0;
@@ -132,7 +137,7 @@ float SUPPLY_CURRENT = 0.0;
 const float ADC_REF_VOLTAGE = 3.3;    // Reference voltage in volts
 const int ADC_RESOLUTION = 4095;      // 12-bit ADC: 0-4095 counts
 const float ADC_VOLTAGE_PER_COUNT = ADC_REF_VOLTAGE / ADC_RESOLUTION;
-const float AMPLIFIER_GAIN = 20.0;      // The amplifier multiplies the sense voltage by 20
+const float AMPLIFIER_GAIN = 20.0;      // The amplifier multiplies the sense voltage by 20 + 4.2 because offset
 
 // Non-blocking LED variables
 uint8_t led_state = 0;
@@ -201,11 +206,14 @@ void loop() {
   if (currentMillis - previousMillis >= interval) { // Update every 'interval' milliseconds (400ms)
     previousMillis = currentMillis;
     chargeState = charger.getChargeCycleStatus();
-    if ((charger.getVBATADC() > 20000 && charger.getVBATADC() < 29000) && chargeState != NOT_CHA) {checkChargeCurrentConstraints();}
-    handleCurrentButtons();
-    getCurrents();
-    updateChargeState();
-    if (previousChargeState != chargeState) {
+    get_connectors_status();
+    if ((charger.getVBATADC() > 20000 && charger.getVBATADC() < 29000) && (chargeState != NOT_CHA) && supply_connected) {checkChargeCurrentConstraints();}
+    if (supply_connected) { 
+      handleCurrentButtons();
+      getCurrents();
+      updateChargeState();  
+    }
+    if ((previousChargeState != chargeState) && supply_connected) {
       updateLED();
       console->print("New Charge state: ");
       console->println(charger.getChargeCycleStatus());
@@ -220,7 +228,7 @@ void loop() {
 // Helper function to attempt USBSerial first, then fallback to hardware Serial:
 void initializeConsole(unsigned long baudRate, unsigned long timeoutMs) {
   // First try initializing USBSerial
-  delay(1500); // Allow time for the serial monitor of PlatformIO to connect
+  //delay(1500); // Uncomment to allow time for the serial monitor of PlatformIO to connect and see the first messages
   USBSerial.begin(baudRate);
 
   unsigned long start = millis();
@@ -237,7 +245,7 @@ void initializeConsole(unsigned long baudRate, unsigned long timeoutMs) {
       console = &Serial;
       console->println("Using hardware Serial for console");
   }
-  delay(300); // Allow time for the Serial port to initialize
+  // delay(200); // Allow time for the Serial port to initialize
 }
 
 void setupGPIOs() {
@@ -273,15 +281,17 @@ void updateDisplay() {
   display.setCursor(0, 0);
   display.println("ElonMux V1.0");
   display.println();
-  if (!digitalRead(FAULT1) && digitalRead(FAULT2)) {
+  if (supply_connected && !battery_discharge_connected) {
     display.print("SUPPLY OUT - ");
-    display.print(SUPPLY_CURRENT);
+    if (SUPPLY_CURRENT > 0.5) {display.print(SUPPLY_CURRENT);}
+    else {display.print("0.00");}
     display.println("A");
-  } else if (digitalRead(FAULT1) && !digitalRead(FAULT2)) {
-    display.println("BATTERY OUT - ");
-    display.print(BAT_CURRENT);
+  } else if (!supply_connected && battery_discharge_connected) {
+    display.print("BATTERY OUT - ");
+    if (BAT_CURRENT > 0.5) { display.print(BAT_CURRENT);}
+    else {display.print("0.00");}
     display.println("A");
-  } else {
+  } else if (no_outputs) {
     display.println("NO OUTPUT - USB PWRD");
   }
   display.print("Charge state: ");
@@ -305,8 +315,13 @@ void updateDisplay() {
     display.println("A");
   } else {
     display.print("SET CHG. curr: ");
-    display.print(static_cast<float>(charger.getChargeCurrentLimit()) / 1000.0);
-    display.println("A");
+    if (supply_connected) {
+      display.print(static_cast<float>(charger.getChargeCurrentLimit()) / 1000.0);
+      display.println("A");
+    } else {
+      display.print(static_cast<float>(DEFAULT_CHARGE_CURRENT_CC_24) / 1000.0);
+      display.println("A");
+    }
     display.print("SET target V: ");
     display.print((((static_cast<float>(chargerConfig.chargeVoltageLimit) * 249000.0) / 13967.0) + chargerConfig.chargeVoltageLimit)/1000);
     display.println("V");
@@ -314,13 +329,19 @@ void updateDisplay() {
   if (digitalRead(PGn)) {
     display.print("VSUPPLY TOO LOW");
     chargerisinFault = true;
-    led_state = 10;
-    led.startBlink(500, 500);
   } else {
     chargerisinFault = false;
   }
   displayElapsedTime();
   display.display();
+}
+
+float compensateCurrent(float measured) {
+  // Coefficients determined from calibration:
+  const float a = 1.1417;  
+  const float b = -6.3583; 
+  const float c = 11.786;   
+  return a * measured * measured + b * measured + c;
 }
 
 void getCurrents() {
@@ -346,6 +367,10 @@ void getCurrents() {
   supplySenseVoltage *= 1000;
   batterySenseVoltage *= 1000;
 
+  // Now, at this point your supplySenseVoltage (in mV) represents your uncorrected current reading
+  // since you have 1 mV per 1 A. 
+  // Instead of applying a fixed multiplier, you’ll use your calibration function.
+
   // Store the new readings into the buffers (moving average)
   supplyBuffer[bufferIndex] = supplySenseVoltage;
   batteryBuffer[bufferIndex] = batterySenseVoltage;
@@ -363,12 +388,32 @@ void getCurrents() {
     batterySum += batteryBuffer[i];
   }
   
-  // With 1 mV per 1A at the sense resistor, the average sense voltage in mV equals the current in Amps
-  SUPPLY_CURRENT = supplySum / sampleCount;
-  BAT_CURRENT = batterySum / sampleCount;
+  // With 1 mV per 1A at the sense resistor, the average sense voltage in mV equals the uncorrected current in Amps
+  float supplyMeasured = supplySum / sampleCount;
+  float batteryMeasured = batterySum / sampleCount;
+
+  // Apply the non-linearity compensation via the calibration function
+  if (supplyMeasured > 2.5) {
+    SUPPLY_CURRENT = compensateCurrent(supplyMeasured);
+  } else {
+    SUPPLY_CURRENT = supplyMeasured;
+  } 
+  if (batteryMeasured > 2.5) {
+    BAT_CURRENT = compensateCurrent(batteryMeasured);
+  } else {
+    BAT_CURRENT = batteryMeasured;
+  }
 }
 
+
 void updateLED() {
+  // if no supply or only battery is connected, turn off the LED
+  if ((battery_discharge_connected || no_outputs) && (led_state != 0)) {
+    led.LEDOFF();
+    console->println("LED OFF");
+    led_state = 0;
+    return;
+  }
   switch (previousChargeState) {
     case PRECHARGE: // Precharge
       led_state = 2;
@@ -491,4 +536,26 @@ void checkChargeCurrentConstraints() {
   } else if ((24000 < vbat) && (vbat < 29000) && (charger.getChargeCurrentLimit() >= (MAX_CHARGE_CURRENT_CC_24+CURRENT_STEP_CC_24/2) || charger.getChargeCurrentLimit() <= (MIN_CHARGE_CURRENT_CC_24-CURRENT_STEP_CC_24/2))) {
     charger.setChargeCurrentLimit(DEFAULT_CHARGE_CURRENT_CC_24); 
   }
+}
+
+void get_connectors_status() {
+  // Static variable to hold the previous state of supply_connected
+  static bool prev_supply_connected = false;
+
+  // Read current state from FAULT1
+  bool current_supply_connected = !digitalRead(FAULT1);
+  
+  // Check for rising edge: previously false, now true
+  if (current_supply_connected && !prev_supply_connected) {
+    charger.init(chargerConfig);
+  }
+  // Update the supply_connected state and previous state
+  supply_connected = current_supply_connected;
+  prev_supply_connected = current_supply_connected;
+
+  // Set battery_discharge_connected based on FAULT2 reading
+  battery_discharge_connected = !digitalRead(FAULT2);
+  
+  // Determine no_outputs state based on both FAULT1 and FAULT2
+  no_outputs = (digitalRead(FAULT1) && digitalRead(FAULT2));
 }
