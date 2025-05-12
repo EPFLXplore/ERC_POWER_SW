@@ -528,12 +528,12 @@ void LTC6811_set_cfgr(uint8_t nIC, cell_asic ic[], bool refon, bool adcopt, bool
 }
 */
 void LTC6811_set_cfgr(uint8_t nIC, //current IC
-                      cell_asic *ic,//a two dimensional array that will store the data
+                      cell_asic *ic, //a two dimensional array that will store the data
 					  bool refon, // The REFON bit
 					  bool adcopt, // The ADCOPT bit
-					  bool gpio[5],// The GPIO bit
-					  bool dcc[12],// The DCC bit
-					  bool dcto[4],// The Dcto bit
+					  bool gpio[5], // The GPIO bit
+					  bool dcc[12], // The DCC bit
+					  bool dcto[4], // The Dcto bit
 					  uint16_t uv, // The UV bit
 					  uint16_t  ov // The OV bit
 					  )

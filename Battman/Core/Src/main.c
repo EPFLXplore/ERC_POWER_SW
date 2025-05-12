@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "cmsis_os.h"
 #include "usb_device.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -64,9 +65,21 @@ TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim5;
 TIM_HandleTypeDef htim8;
 
+/* Definitions for defaultTask */
+osThreadId_t defaultTaskHandle;
+const osThreadAttr_t defaultTask_attributes = {
+  .name = "defaultTask",
+  .priority = (osPriority_t) osPriorityNormal,
+  .stack_size = 128 * 4
+};
 /* USER CODE BEGIN PV */
-float voltages[12];	//holds the converted voltages of each cell for 1 BMS IC
-float temperatures[5];	//holds the Temperatures for 1 BMS IC
+const uint8_t TOTAL_IC = 1;	//total number of ICs
+cell_asic bms_ic[TOTAL_IC];	//the cell_asic struct objects
+
+float voltages[TOTAL_IC][CellsNbS];	//holds the converted voltages of each cell
+float temperatures[TOTAL_IC][NbTherm];	//holds the Temperatures
+float currents[2]; //holds the current from both sensors
+uint32_t adcVal[2]; //Array that holds the ADC values (ADC1 and ADC2)
 
 //LTC CONFIGURATION VARIABLES
 bool REFON = true; //!< Reference Powered Up Bit (true means Vref remains powered on between conversions)
@@ -74,7 +87,25 @@ bool ADCOPT = true; //!< ADC Mode option bit	(true chooses the second set of ADC
 bool gpioBits_a[5] = {false,false,false,false,false}; //!< GPIO Pin Control // Gpio 1,2,3,4,5 (false -> pull-down on)
 bool dccBits_a[12] = {false,false,false,false,false,false,false,false,false,false,false,false}; //!< Discharge cell switch //Dcc 1,2,3,4,5,6,7,8,9,10,11,12 (all false -> no discharge enabled)
 bool dctoBits[4] = {false, false, false, false}; //!< Discharge time value // Dcto 0,1,2,3	(all false -> discharge timer disabled)
+uint16_t uv_a = 1000*MinDschgVolt; // The UV register
+uint16_t  ov_a = 1000*ChgEndVolt;// The OV register
+uint8_t N_Error = 10;	//number of allowed consecutive errors (To be Optimised)
 
+//ERROR COUNTERS
+int8_t cvError = 0,auxError = 0;	//hold if an error has occured while reading cell voltage and aux voltage values
+int NOV [TOTAL_IC][CellsNbS];	//overvoltage error integrator per IC per cell
+int NUV [TOTAL_IC][CellsNbS];	//undervoltage error integrator per IC per cell
+int NOT [TOTAL_IC][NbTherm];	//overtemperature error integrator per IC per sensor
+int NUT [TOTAL_IC][NbTherm];	//undertemperature error integrator per IC per sensor
+int NC[TOTAL_IC];				//communication error integrator per IC
+int NOC [2];					//over current error integrator per Sensor
+//ERROR FLAGS
+bool tempError = false;	        //holds if an error has occured while reading temperature values or out of range temperature(Yellow LED)
+bool voltageError = false;		//holds if an error has occured while reading cell voltage values or out of range voltage(Red LED)
+bool currentError = false;		//holds if an error has occured while reading current values or out of range current(Amber LED)
+bool chargeEnable = false;		//holds if conditions are met to enable charge
+bool dischargeEnable = false;	//holds if conditions are met to enable discharge
+bool System_OK = true;			//holds if the MCU and BMS_ICs are OK, turned off by watchdog, Comm errors or failed BMS Selftests(Green LED)
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -93,6 +124,8 @@ static void MX_TIM3_Init(void);
 static void MX_TIM4_Init(void);
 static void MX_TIM5_Init(void);
 static void MX_TIM8_Init(void);
+void StartDefaultTask(void *argument);
+
 /* USER CODE BEGIN PFP */
 void LTC6811_init(void);	//Initializes the LTC and the SPI communication
 /* USER CODE END PFP */
@@ -137,7 +170,6 @@ int main(void)
   MX_DMA_Init();
   MX_FDCAN1_Init();
   MX_RTC_Init();
-  MX_USB_Device_Init();
   MX_ADC1_Init();
   MX_SPI1_Init();
   MX_ICACHE_Init();
@@ -151,6 +183,10 @@ int main(void)
 
   LTC6811_init();	//initializes the LTC (and SPI communication)
 
+  //START ADC
+  HAL_ADC_Start_DMA(&hadc1, (uint32_t *)adcVal[0], 1);
+  HAL_ADC_Start_DMA(&hadc2, (uint32_t *)adcVal[1], 1);
+
   //START TIMERS
   HAL_TIM_Base_Start(&htim8);	//Triggers ADCs
 
@@ -160,6 +196,42 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim2); // Triggers voltage conversion
 
   /* USER CODE END 2 */
+
+  /* Init scheduler */
+  osKernelInitialize();
+
+  /* USER CODE BEGIN RTOS_MUTEX */
+  /* add mutexes, ... */
+  /* USER CODE END RTOS_MUTEX */
+
+  /* USER CODE BEGIN RTOS_SEMAPHORES */
+  /* add semaphores, ... */
+  /* USER CODE END RTOS_SEMAPHORES */
+
+  /* USER CODE BEGIN RTOS_TIMERS */
+  /* start timers, add new ones, ... */
+  /* USER CODE END RTOS_TIMERS */
+
+  /* USER CODE BEGIN RTOS_QUEUES */
+  /* add queues, ... */
+  /* USER CODE END RTOS_QUEUES */
+
+  /* Create the thread(s) */
+  /* creation of defaultTask */
+  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+
+  /* USER CODE BEGIN RTOS_THREADS */
+  /* add threads, ... */
+  /* USER CODE END RTOS_THREADS */
+
+  /* USER CODE BEGIN RTOS_EVENTS */
+  /* add events, ... */
+  /* USER CODE END RTOS_EVENTS */
+
+  /* Start scheduler */
+  osKernelStart();
+
+  /* We should never get here as control is now taken by the scheduler */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
@@ -860,10 +932,10 @@ static void MX_DMA_Init(void)
 
   /* DMA interrupt init */
   /* DMA1_Channel1_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
   /* DMA1_Channel2_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Channel2_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(DMA1_Channel2_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel2_IRQn);
 
 }
@@ -1037,7 +1109,7 @@ void LTC6811_init(){
 	LTC6811_init_cfg(TOTAL_IC, bms_ic);	//Initializes the confiugration registers to all 0s
 	//This for loop initializes the configuration register variables
 	for (uint8_t current_ic = 0; current_ic<TOTAL_IC;current_ic++){
-		LTC6811_set_cfgr(current_ic,bms_ic,REFON,ADCOPT,gpioBits_a,dccBits_a); // write LTC config like defined above
+		LTC6811_set_cfgr(current_ic,bms_ic,REFON,ADCOPT,gpioBits_a,dccBits_a,dcto,uv_a,ov_a); // write LTC config like defined above
     }
 	LTC6811_reset_crc_count(TOTAL_IC,bms_ic);	//sets the CRC count to 0
 	LTC6811_init_reg_limits(TOTAL_IC, bms_ic);	//Initializes the LTC's register limits for LTC6811 (because the generic LTC681x libraries can also be used for LTC6813 and others)
@@ -1048,15 +1120,107 @@ void LTC6811_init(){
 //convert ADC values into temperature
 void tempConvert(){
 	for (int current_ic = 0; current_ic < TOTAL_IC; current_ic++){
-		for(int sensor = 0; sensor < TOTAL_SENSOR; sensor++){
-			temperatures[i] = 1/((1/B)*log(((bms_ic[0].aux.a_codes[i]/bms_ic[0].aux.a_codes[AUX_CH_VREF2])+1)*R1/Rntc)+1/(Tref+273.15))-273.15;
+		for(int sensor = 0; sensor < NbTherm; sensor++){
+			temperatures[i] = 1/((1/ThermB)*log(((bms_ic[0].aux.a_codes[i]/bms_ic[0].aux.a_codes[AUX_CH_VREF2])+1)*ThermRs/ThermR25)+1/(298.15))-273.15;
 		}
 	}
 }
-//convert stm ADC into current after DMA interrupt
 
+//convert ADC values into current sensor skaling 19.8mV/A
+void currentConvert(){
+	for(int i=0;i<2;i++){
+		current[i] = adcVal[i]*0.0406901041667;	//19.8mV/A
+	}
+}
 
+void errorCheck(){
+	//Check for overvoltage or undervoltage and increase the counting arrays accordingly
+	for (int i = 0; i < TOTAL_IC; i++){
+		for (int j = 0; j < CellsNbS; j++){
+			if(voltages[i][j] > ChgEndVolt){
+				NOV[i][j]++;
+			}else if(NOV[i][j]>0){
+				NOV[i][j]--;
+			}
+			if(voltages[i][j] < MinDschgVolt){
+				NUV[i][j]++;
+			}else if(NUV[i][j]>0){
+				NUV[i][j]--;
+			}
+		}
+		//Check for overtemperature or undertemperature and increase the counting arrays accordingly
+		for (int j = 0; j < AuxNbS; j++){
+			if(temperatures[i][j] > OverTemp){
+				NOT[i][j]++;
+			}else if(NOT[i][j]>0){
+				NOT[i][j]--;
+			}
+			if(temperatures[i][j] < ChgUnderTemp){
+				NUT[i][j]++;
+			}else if(NUT[i][j]>0){
+				NUT[i][j]--;
+			}
+		}
+	//check for communication errors
+	if(cvError>0 || auxError>0){
+		NC[i]++;
+	}
+	//Check for overcurrent and increase the counting arrays accordingly
+	if(current[0] > ChgOCP){
+		NOC[0]++;
+	}else if(NOC[0] > 0){
+		NOC[0]--;
+	}
+	if(current[1] > DschgOCP){
+		NOC[1]++;
+	}else if(NOC[1] > 0){
+		NOC[1]--;
+	}
+	//Output control
+	for (int i = 0; i < TOTAL_IC; i++){
+		for (int j = 0; j < CellsNbS; j++){
+			if(NOV[i][j] > N_Error){
+				chargeEnable = false;
+				voltageError = true;
+			}
+			if(NUV[i][j] > N_Error){
+				dischargeEnable = false;
+				voltageError = true;
+			}
+			if(NOT[i][j] > N_Error){
+				chargeEnable = false;
+				dischargeEnable = false;
+				temperatureError = true;
+			}
+			if(NUT[i][j] > N_Error){
+				chargeEnable = false;
+				temperatureError = true;
+			}
+		}
+	}
+	if(NOC[0] > N_Error){
+		chargeEnable = false;
+		currentError = true;
+	}
+	if(NOC[1] > N_Error){
+		dischargeEnable = false;
+		currentError = true;
+	}
+}
 
+void LEDControl(){
+	//blink Red and Amber in case of hardware fault
+	if(hardwareFault){
+		HAL_GPIO_TogglePin(LED_R_GPIO_Port, LED_R_Pin);
+		HAL_GPIO_TogglePin(LED_A_GPIO_Port, LED_A_Pin);
+	}else{
+		HAL_GPIO_WritePin(LED_R_GPIO_Port, LED_R_Pin, voltageError);
+		HAL_GPIO_WritePin(LED_A_GPIO_Port, LED_A_Pin, currentError);
+		HAL_GPIO_WritePin(LED_Y_GPIO_Port, LED_Y_Pin, temperatureError);
+	}
+	HAL_GPIO_WritePin(LED_G_GPIO_Port, LED_G_Pin, MCU_OK);
+	osDelay(800);
+}
 
 void SetHardwareProtection(){
 	// HardwareOVP
@@ -1084,6 +1248,48 @@ void SetHardwareProtection(){
 
 
 /* USER CODE END 4 */
+
+/* USER CODE BEGIN Header_StartDefaultTask */
+/**
+  * @brief  Function implementing the defaultTask thread.
+  * @param  argument: Not used
+  * @retval None
+  */
+/* USER CODE END Header_StartDefaultTask */
+void StartDefaultTask(void *argument)
+{
+  /* init code for USB_Device */
+  MX_USB_Device_Init();
+  /* USER CODE BEGIN 5 */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END 5 */
+}
+
+/**
+  * @brief  Period elapsed callback in non blocking mode
+  * @note   This function is called  when TIM6 interrupt took place, inside
+  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  * a global variable "uwTick" used as application time base.
+  * @param  htim : TIM handle
+  * @retval None
+  */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  /* USER CODE BEGIN Callback 0 */
+
+  /* USER CODE END Callback 0 */
+  if (htim->Instance == TIM6)
+  {
+    HAL_IncTick();
+  }
+  /* USER CODE BEGIN Callback 1 */
+
+  /* USER CODE END Callback 1 */
+}
 
 /**
   * @brief  This function is executed in case of error occurrence.
