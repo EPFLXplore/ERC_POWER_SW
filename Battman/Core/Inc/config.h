@@ -69,7 +69,7 @@ float OverTemp = 80;
 float ChgUnderTemp = 1;
 
 //List of Cell settings that should be considered including but not limited to:
-float BalThresVolt 4.1; //Blancing start voltage
+float BalThresVolt = 4.1; //Blancing start voltage
 float MaxDisbal = 0.015; //Balance the battery to reduce the delta voltage to this value
 uint8_t CellsNbS = 7; //number of cells in Serie for Software protection
 float ChgEndVolt = 4.19; // charge end voltage
@@ -77,7 +77,7 @@ float ChgEndCurr = 1.0; // charge end current
 float MinDschgVolt = 3.0; // minimum discharge voltage
 float IntBlockRes = 23.5/4; // mOhm, individual cell resistance divided by number of parallel cells
 float Capacity = 12; // Ah
-float SOC = 0; // in % start value
+float SOC = 0; // in %, start value
 // Temperature sensor parameters
 uint8_t NbTherm = 3; // number of thermistors
 uint16_t ThermB = 3984; // Thermistor B coefficient

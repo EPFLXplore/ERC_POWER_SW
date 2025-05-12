@@ -1245,7 +1245,24 @@ void SetHardwareProtection(){
     HAL_GPIO_WritePin(A1_8_GPIO_Port, A1_8_Pin, (HardwareCycleTime>>1)&1);
     HAL_GPIO_WritePin(A0_8_GPIO_Port, A0_8_Pin, (HardwareCycleTime)&1);
 }
+void balancingControl(){
+	if(current[0]>chgEndCurrent){
+		//determine deltaV and highest cell
+		int maxVoltage = 0;
+		int minVoltage = 10;
+		for(int i=0;i<CellsNbS;i++){
+			if(voltages[0][i]>maxVoltage){
+				maxVoltage = voltages[0][i];
+				maxCell = i;
+			}
+			if (voltages[0][i]<minVoltage){
+				minVoltage = voltages[0][i];
+				minCell = i;
+			}
+		}
 
+
+}
 
 /* USER CODE END 4 */
 
