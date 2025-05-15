@@ -1,0 +1,9 @@
+../BMS/BMS.c:50:6:LTC6811_init	2
+../BMS/BMS.c:63:6:tempConvert	4
+../BMS/BMS.c:71:6:readVoltages	3
+../BMS/BMS.c:83:6:readTemperatures	1
+../BMS/BMS.c:87:6:currentConvert	2
+../BMS/BMS.c:93:6:errorCheck	26
+../BMS/BMS.c:170:6:LEDControl	2
+../BMS/BMS.c:185:6:SetHardwareProtection	1
+../BMS/BMS.c:209:6:balancingControl	7

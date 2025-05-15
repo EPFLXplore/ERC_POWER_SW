@@ -11,11 +11,16 @@ RM := rm -rf
 -include sources.mk
 -include USB_Device/Target/subdir.mk
 -include USB_Device/App/subdir.mk
+-include Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/subdir.mk
+-include Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM33_NTZ/non_secure/subdir.mk
+-include Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/subdir.mk
+-include Middlewares/Third_Party/FreeRTOS/Source/subdir.mk
 -include Middlewares/ST/STM32_USB_Device_Library/Core/Src/subdir.mk
--include Middlewares/ST/STM32_USB_Device_Library/Class/DFU/Src/subdir.mk
+-include Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/subdir.mk
 -include Drivers/STM32L5xx_HAL_Driver/Src/subdir.mk
 -include Core/Startup/subdir.mk
 -include Core/Src/subdir.mk
+-include BMS/subdir.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
@@ -64,8 +69,8 @@ all: main-build
 main-build: ERC_BMS_SW.elf secondary-outputs
 
 # Tool invocations
-ERC_BMS_SW.elf ERC_BMS_SW.map: $(OBJS) $(USER_OBJS) /home/otto/STM32CubeIDE/workspace_1.18.0/ERC_BMS_SW/STM32L552RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "ERC_BMS_SW.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m33 -T"/home/otto/STM32CubeIDE/workspace_1.18.0/ERC_BMS_SW/STM32L552RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="ERC_BMS_SW.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+ERC_BMS_SW.elf ERC_BMS_SW.map: $(OBJS) $(USER_OBJS) /home/otto/ERC_POWER_SW/Battman/STM32L552RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "ERC_BMS_SW.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m33 -T"/home/otto/ERC_POWER_SW/Battman/STM32L552RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="ERC_BMS_SW.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

@@ -1,0 +1,6 @@
+../BMS/LT_SPI.c:39:6:cs_low	8	static
+../BMS/LT_SPI.c:45:6:cs_high	8	static
+../BMS/LT_SPI.c:50:6:spi_write	32	static
+../BMS/LT_SPI.c:56:6:spi_write_array	32	static
+../BMS/LT_SPI.c:70:6:spi_write_read	40	static
+../BMS/LT_SPI.c:95:9:spi_read_byte	32	static
