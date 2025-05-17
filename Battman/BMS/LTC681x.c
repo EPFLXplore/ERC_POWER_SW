@@ -79,6 +79,7 @@ void wakeup_idle(uint8_t total_ic)
   for (int i =0; i<total_ic; i++)
   {
     cs_low();
+    HAL_Delay(1);
     //delayMicroseconds(2); //Guarantees the isoSPI will be in ready mode
     spi_read_byte(0xff);
     cs_high();

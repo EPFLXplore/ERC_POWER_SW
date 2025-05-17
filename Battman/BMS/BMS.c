@@ -11,6 +11,8 @@
 #include "LT_SPI.h"
 #include "LTC681x.h"
 #include "config.h"
+#include <math.h>
+#include <string.h>
 
 cell_asic bms_ic[TOTAL_IC];	//the cell_asic struct objects
 
@@ -61,9 +63,15 @@ void LTC6811_init(){
 }
 //convert ADC values into temperature
 void tempConvert(){
+	float innerlog;
 	for (int current_ic = 0; current_ic < TOTAL_IC; current_ic++){
 		for(int sensor = 0; sensor < NbTherm; sensor++){
-			temperatures[current_ic][sensor] = 1/((1/ThermB)*log(((bms_ic[current_ic].aux.a_codes[sensor]/bms_ic[0].aux.a_codes[AUX_CH_VREF2])+1)*ThermRs/ThermR25)+1/(298.15))-273.15;
+			if(bms_ic[current_ic].aux.a_codes[AUX_CH_VREF2-1] == 0x00){
+				temperatures[current_ic][sensor] = 7;
+				continue;
+			}
+			innerlog = (((float)bms_ic[current_ic].aux.a_codes[sensor]/(float)bms_ic[current_ic].aux.a_codes[AUX_CH_VREF2-1])-1.0)*ThermRs/ThermR25;
+			temperatures[current_ic][sensor] = 1/((1/ThermB)*log(innerlog)+1/(298.15))-273.15;
 		}
 	}
 }
@@ -76,7 +84,7 @@ void readVoltages(){
 //		                    )
 	for(int i=0; i<TOTAL_IC; i++){
 		for(int j=0; j<CellsNbS; j++){
-			voltages[i][j] = bms_ic[i].cells.c_codes[j] * 0.0001; //convert the cell voltage codes to voltages
+			voltages[i][j] = (float)bms_ic[i].cells.c_codes[j] * 0.0001; //convert the cell voltage codes to voltages
 		}
 	}
 }

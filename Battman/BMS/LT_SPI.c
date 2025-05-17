@@ -83,10 +83,11 @@ void spi_write_read(uint8_t  tx_Data[],
     }
 
     // Receive data from DC2259A board.
+    uint8_t adress = 0xFF;
     for ( i = 0; i < rx_len; i++ )
     {
         // Receive byte.
-        HAL_SPI_TransmitReceive(&hspi1, (uint8_t*)0xFF, (uint8_t*)&rx_data[i], 1, HAL_MAX_DELAY);
+        HAL_SPI_TransmitReceive(&hspi1, (uint8_t*)&adress, (uint8_t*)&rx_data[i], 1, HAL_MAX_DELAY);
     }
 }
 
@@ -96,7 +97,7 @@ uint8_t spi_read_byte(uint8_t tx_dat)
 {
     uint8_t data;
 
-    if ( HAL_SPI_TransmitReceive(&hspi1, (uint8_t*)0xFF, (uint8_t*)&data, 1, HAL_MAX_DELAY) == HAL_OK )
+    if ( HAL_SPI_TransmitReceive(&hspi1, (uint8_t*)&tx_dat, (uint8_t*)&data, 1, HAL_MAX_DELAY) == HAL_OK )
     {
         return(data);
     }

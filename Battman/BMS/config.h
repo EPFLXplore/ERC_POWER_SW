@@ -80,9 +80,9 @@ const float Capacity = 12; // Ah
 const float SOC = 0; // in %, start value
 // Temperature sensor parameters
 #define NbTherm 3 // number of thermistors
-const uint16_t ThermB = 3984; // Thermistor B coefficient
-uint16_t ThermR25 = 10000; // Thermistor Resistance at 25°C
-uint16_t ThermRs = 10000; // Series resistance
+float ThermB = 3984; // Thermistor B coefficient
+float ThermR25 = 10000; // Thermistor Resistance at 25°C
+float ThermRs = 10000; // Series resistance
 
 
 
