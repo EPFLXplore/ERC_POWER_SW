@@ -44,33 +44,17 @@ uint8_t readRegister(uint8_t address, uint8_t reg) {
     return 0; // Return 0 if no data was received
 }
 
-// uint16_t readRegister16(uint8_t address, uint8_t reg) { 
-//     Wire.beginTransmission(address);
-//     Wire.write(reg);
-//     // Send STOP condition instead of repeated start   
-//     if (Wire.endTransmission(false) != 0) { 
-//         return 0xFFFF; // Error   
-//     }
-//     // Now request 2 bytes from the device   
-//     uint8_t bytesRead = Wire.requestFrom(address, (uint8_t)2); 
-//     if (bytesRead < 2) { 
-//         return 0xFFFF; // Error   
-//     }
-//     uint8_t lsb = Wire.read(); 
-//     uint8_t msb = Wire.read();
-//     return ((uint16_t)msb << 8) | lsb; 
-// }
-
 uint16_t readRegister16(uint8_t address, uint8_t reg) { 
-    
+    // 0) Send register address
     Wire.beginTransmission(address);
     Wire.write(reg);  
-    Wire.endTransmission(false);  // use repeated start
+    // 1) End the transmission with a repeated start
+    Wire.endTransmission(false);
 
     // 2) Request 2 bytes
     Wire.requestFrom((int)address, 2);
 
-    // 3) Read LSB then MSB (typical for TI registers, but check datasheet)
+    // 3) Read LSB then MSB (typical for TI registers)
     uint8_t low_bits  = Wire.read();
     uint8_t high_bits = Wire.read();
 

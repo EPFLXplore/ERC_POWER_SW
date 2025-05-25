@@ -29,7 +29,7 @@
 #define CURRENT_STEP_CC_23 100
 // charge current constraints for CC mode between 24V and 28.3V
 #define MIN_CHARGE_CURRENT_CC_24 1500
-#define DEFAULT_CHARGE_CURRENT_CC_24 3000
+#define DEFAULT_CHARGE_CURRENT_CC_24 2300
 #define MAX_CHARGE_CURRENT_CC_24 5500
 #define CURRENT_STEP_CC_24 100
 // charge current constraints for CV mode at 28.3V
@@ -78,7 +78,6 @@ void updateDisplay();
 void getCurrents();
 void updateLED();
 void displayChargerStage();
-//void IRAM_ATTR handleFaultInterrupt();
 void updateChargeState();
 void displayElapsedTime();
 void handleCurrentButtons();
@@ -90,7 +89,7 @@ BQ25756E charger(BQ25756E_ADDRESS, SWITCHING_FREQUENCY, MAX_CHARGE_CURRENT, MAX_
 
 // Create a BQ25756E configuration structure  
 BQ25756E_Config chargerConfig = {
-    .chargeVoltageLimit = 1504, // Range: 1504mV (28.31V) to 1566 mV(29.48V)
+    .chargeVoltageLimit = 1506, // Range: 1504mV (28.31V) to 1566 mV(29.48V)
     .chargeCurrentLimit = DEFAULT_CHARGE_CURRENT_CC_24, // Displayed charge current will be lower by around 10%, but the real current will be close to the set value. Range: 0.4A to 10A
     .inputCurrentDPMLimit = 7000, // Range: 0.4A to 20A
     .inputVoltageDPMLimit = 15000, // voltage in mV under which the charger will reduce the input current
@@ -192,7 +191,7 @@ void setup() {
   setupGPIOs();
   // Initialize the RTOS LED
   led.begin();
-  led.startBlinkForDuration(200, 200, 1400);
+  led.startBlinkForDuration(200, 200, 1400); // Blink for 1.4 seconds to indicate MCU boot
 
   console->println("\nInitializing BQ25756E charger...\n");
   charger.setDebugStream(console); // Let the charger's library know which stream to use for debug
@@ -210,7 +209,7 @@ void loop() {
     if ((charger.getVBATADC() > 20000 && charger.getVBATADC() < 29000) && (chargeState != NOT_CHA) && supply_connected) {checkChargeCurrentConstraints();}
     if (supply_connected) { 
       handleCurrentButtons();
-      getCurrents();
+      //getCurrents();
       updateChargeState();  
     }
     if ((previousChargeState != chargeState) && supply_connected) {
@@ -245,7 +244,6 @@ void initializeConsole(unsigned long baudRate, unsigned long timeoutMs) {
       console = &Serial;
       console->println("Using hardware Serial for console");
   }
-  // delay(200); // Allow time for the Serial port to initialize
 }
 
 void setupGPIOs() {
@@ -282,15 +280,9 @@ void updateDisplay() {
   display.println("ElonMux V1.0");
   display.println();
   if (supply_connected && !battery_discharge_connected) {
-    display.print("SUPPLY OUT - ");
-    if (SUPPLY_CURRENT > 0.5) {display.print(SUPPLY_CURRENT);}
-    else {display.print("0.00");}
-    display.println("A");
+    display.println("SUPPLY OUT");
   } else if (!supply_connected && battery_discharge_connected) {
-    display.print("BATTERY OUT - ");
-    if (BAT_CURRENT > 0.5) { display.print(BAT_CURRENT);}
-    else {display.print("0.00");}
-    display.println("A");
+    display.println("BATTERY OUT");
   } else if (no_outputs) {
     display.println("NO OUTPUT - USB PWRD");
   }
@@ -446,22 +438,14 @@ void displayChargerStage() {
   }
 }
 
-// void IRAM_ATTR handleFaultInterrupt() {
-//   chargerisinFault = true;  // Set the flag when an interrupt occurs
-//   charger.disableCharge();  // Disable charging when a fault occurs
-//   led_state = 10;
-//   console->println("Fault interrupt triggered!");
-//   led.startBlink(200, 200);  // Start blinking the LED
-// }
-
 void updateChargeState() {
   // If the charger state is no longer "NOT_CHA" and we haven't started timing yet
   if (chargeState != NOT_CHA && !charging) {
     charging = true;
     chargeStartTime = millis();  // Start timer when the charge cycle begins
   }
-  // Optionally, reset the timer when the charge state goes back to "NOT_CHA"
-  if (chargeState == NOT_CHA && charging) {
+  // Stop the timer when charging is complete (either not charging or done charging)
+  if ((chargeState == NOT_CHA || chargeState == DONE) && charging) {
     charging = false;
   }
 }

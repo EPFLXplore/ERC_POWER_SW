@@ -14,11 +14,11 @@ void BQ25756E::init(const BQ25756E_Config& cfg) {
     // Save the configuration
     config = cfg;
 
-    setChargeVoltageLimit(cfg.chargeVoltageLimit); // Set the charge voltage limit
-    setChargeCurrentLimit(cfg.chargeCurrentLimit); // Set the charge current limit
-    setInputCurrentLimit(cfg.inputCurrentDPMLimit);   // Set the input current limit
-    setInputVoltageDPM(cfg.inputVoltageDPMLimit);     // Set the input voltage DPM limit
-    setPrechargeCurrentLimit(cfg.prechargeCurrentLimit); // Set the precharge current limit
+    setChargeVoltageLimit(cfg.chargeVoltageLimit);           // Set the charge voltage limit
+    setChargeCurrentLimit(cfg.chargeCurrentLimit);           // Set the charge current limit
+    setInputCurrentLimit(cfg.inputCurrentDPMLimit);          // Set the input current limit
+    setInputVoltageDPM(cfg.inputVoltageDPMLimit);            // Set the input voltage DPM limit
+    setPrechargeCurrentLimit(cfg.prechargeCurrentLimit);     // Set the precharge current limit
     setTerminationCurrentLimit(cfg.terminationCurrentLimit); // Set the termination current limit
     configurePrechargeTermination(cfg.terminationControlEnabled, cfg.fastChargeThreshold, cfg.prechargeControlEnabled); // Configure precharge and termination control
     // Timer Control Register
@@ -35,13 +35,11 @@ void BQ25756E::init(const BQ25756E_Config& cfg) {
     setHighZmode(cfg.highZModeEnabled); // Set the high-Z mode
     enableControlledDischarge(cfg.batteryLoadEnabled); // Enable controlled discharge
     if (cfg.chargeEnabled) {enableCharge();} else {disableCharge();}; // Enable charging
-    // Pin Control Register
     enablePins(1, 1, 1, 1); // Enable the ICHG, ILIM_HIZ, PG, and STAT pins
     configureVACLoad(true); // Configure the VAC load
     setPFMMode(false); // Set the PFM mode
     setTSPinFunction(); // Set the TS pin function
     configureADC(); // Configure the ADC
-    //configureADCChannels(); // Configure the ADC channel
 
     printChargerConfig(true); // Print the charger configuration
 }
@@ -282,10 +280,6 @@ uint8_t BQ25756E::getADCChannelControl() {
 }
 
 uint16_t BQ25756E::getIACADCRegister() {
-    // uint8_t high_bits = readRegister(address, BQ25756E_REG_IAC_ADC + 1);
-    // uint8_t low_bits =  readRegister(address, BQ25756E_REG_IAC_ADC);
-    // uint16_t regValue = (high_bits << 8) | low_bits;
-    // return regValue;
     return readRegister16(address, BQ25756E_REG_IAC_ADC);
 }
 
@@ -294,10 +288,6 @@ uint16_t BQ25756E::getIACADC() {
 }
 
 uint16_t BQ25756E::getIBATADCRegister() {
-    // uint8_t high_bits = readRegister(address, BQ25756E_REG_IBAT_ADC + 1);
-    // uint8_t low_bits =  readRegister(address, BQ25756E_REG_IBAT_ADC);
-    // uint16_t regValue = (high_bits << 8) | low_bits;
-    // return regValue;
     return readRegister16(address, BQ25756E_REG_IBAT_ADC);
 }
 
@@ -306,23 +296,12 @@ uint16_t BQ25756E::getIBATADC() {
 }
 
 uint16_t BQ25756E::getVACADCRegister() {
-    // uint8_t high_bits = readRegister(address, BQ25756E_REG_VAC_ADC + 1);
-    // uint8_t low_bits =  readRegister(address, BQ25756E_REG_VAC_ADC);
-    // uint16_t regValue = (high_bits << 8) | low_bits;
-    // return regValue;
     return readRegister16(address, BQ25756E_REG_VAC_ADC);
 }
 
 uint16_t BQ25756E::getVACADC() {
     return getVACADCRegister() * 2;
 }
-
-// uint16_t BQ25756E::getVBATADCRegister() {
-//     uint8_t high_bits = readRegister(address, BQ25756E_REG_VBAT_ADC + 1);
-//     uint8_t low_bits =  readRegister(address, BQ25756E_REG_VBAT_ADC);
-//     uint16_t regValue = (high_bits << 8) | low_bits;
-//     return regValue;
-// }
 
 uint16_t BQ25756E::getVBATADCRegister() {
     return readRegister16(address, BQ25756E_REG_VBAT_ADC);
@@ -333,10 +312,6 @@ uint16_t BQ25756E::getVBATADC() {
 }
 
 uint16_t BQ25756E::getTSADCRegister() {
-    // uint8_t high_bits = readRegister(address, BQ25756E_REG_TS_ADC + 1);
-    // uint8_t low_bits =  readRegister(address, BQ25756E_REG_TS_ADC);
-    // uint16_t regValue = (high_bits << 8) | low_bits;
-    // return regValue;
     return readRegister16(address, BQ25756E_REG_TS_ADC);
 }
 
@@ -345,10 +320,6 @@ double BQ25756E::getTSADC() {
 }
 
 uint16_t BQ25756E::getVFBADCRegister() {
-    // uint8_t high_bits = readRegister(address, BQ25756E_REG_VFB_ADC + 1);
-    // uint8_t low_bits =  readRegister(address, BQ25756E_REG_VFB_ADC);
-    // uint16_t regValue = (high_bits << 8) | low_bits;
-    // return regValue;
     return readRegister16(address, BQ25756E_REG_VFB_ADC);
 }
 
