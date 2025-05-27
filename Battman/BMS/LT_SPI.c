@@ -5,37 +5,6 @@
 #include "stm32l5xx_hal.h"
 #include "spi.h"
 
-//SPI_HandleTypeDef hspi1;
-//
-//void LTC6811_Initialize(void)
-//{
-//	/*--------------- !!!ATTENTION!!! --------------- /
-//	 * 												  /
-//	 * Clock must be at 128MHz						  /
-//	 * Do NOT Initialize SPI in CubeMX	              /
-//	 *                                                /
-//	`*-----------------------------------------------*/
-//
-//  /* SPI4 parameter configuration*/
-//  hspi1.Instance = SPI1;
-//  hspi1.Init.Mode = SPI_MODE_MASTER;
-//  hspi1.Init.Direction = SPI_DIRECTION_2LINES;
-//  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
-//  hspi1.Init.CLKPolarity = SPI_POLARITY_HIGH;
-//  hspi1.Init.CLKPhase = SPI_PHASE_2EDGE;
-//  hspi1.Init.NSS = SPI_NSS_SOFT;
-//  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_64;
-//  hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
-//  hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
-//  hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
-//  hspi1.Init.CRCPolynomial = 10;
-//
-//  if (HAL_SPI_Init(&hspi1) != HAL_OK)
-//  {
-//    //_Error_Handler(__FILE__, __LINE__);
-//  }
-//}
-
 void cs_low(void)
 {
     // Set chip select pin low.

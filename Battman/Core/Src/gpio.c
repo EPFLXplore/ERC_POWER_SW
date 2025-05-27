@@ -33,8 +33,6 @@
 /* USER CODE END 1 */
 
 /** Configure pins
-     PC14-OSC32_IN (PC14)   ------> RCC_OSC32_IN
-     PC15-OSC32_OUT (PC15)   ------> RCC_OSC32_OUT
      PA13 (JTMS/SWDIO)   ------> DEBUG_JTMS-SWDIO
      PA14 (JTCK/SWCLK)   ------> DEBUG_JTCK-SWCLK
      PA15 (JTDI)   ------> DEBUG_JTDI
@@ -122,14 +120,14 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : Config1_Pin Config2_Pin */
-  GPIO_InitStruct.Pin = Config1_Pin|Config2_Pin;
+  /*Configure GPIO pins : Config4_Pin Config3_Pin */
+  GPIO_InitStruct.Pin = Config4_Pin|Config3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : Config3_Pin Config4_Pin */
-  GPIO_InitStruct.Pin = Config3_Pin|Config4_Pin;
+  /*Configure GPIO pins : Config2_Pin Config1_Pin */
+  GPIO_InitStruct.Pin = Config2_Pin|Config1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);

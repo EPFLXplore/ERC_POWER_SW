@@ -58,7 +58,7 @@ enum DC{ //Cycle time Selection
 //List of Critical events that should be considered including but not limited to:
 const uint8_t HardwareOVP = OV42;
 const uint8_t HardwareUVP = UV21;
-const uint8_t HardwareCellCnt = Cell7;  //number of cells in Serie for hardware protection
+const uint8_t HardwareCellCnt = Cell10;  //number of cells in Serie for hardware protection
 const uint8_t HardwareHysterysis = H0;
 const uint8_t HardwareCycleTime = DC2;
 //float SoftwareOVP = 4.18; // charge end and discharge end voltage take this role
@@ -71,7 +71,7 @@ const float ChgUnderTemp = 1;
 //List of Cell settings that should be considered including but not limited to:
 const float BalThresVolt = 4.1; //Blancing start voltage
 const float MaxDisbal = 0.015; //Balance the battery to reduce the delta voltage to this value
-#define CellsNbS 7 //number of cells in Serie for Software protection
+#define CellsNbS 10 //number of cells in Serie for Software protection
 const float ChgEndVolt = 4.19; // charge end voltage
 const float ChgEndCurr = 1.0; // charge end current
 const float MinDschgVolt = 3.0; // minimum discharge voltage
@@ -80,7 +80,8 @@ const float Capacity = 12; // Ah
 const float SOC = 0; // in %, start value
 // Temperature sensor parameters
 #define NbTherm 3 // number of thermistors
-float ThermB = 3984; // Thermistor B coefficient
+//float ThermB = 3984; // Thermistor B coefficient
+float ThermB = 3435;
 float ThermR25 = 10000; // Thermistor Resistance at 25°C
 float ThermRs = 10000; // Series resistance
 

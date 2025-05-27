@@ -1,6 +1,6 @@
-../BMS/LT_SPI.c:39:6:cs_low	1
-../BMS/LT_SPI.c:45:6:cs_high	1
-../BMS/LT_SPI.c:50:6:spi_write	1
-../BMS/LT_SPI.c:56:6:spi_write_array	2
-../BMS/LT_SPI.c:70:6:spi_write_read	3
-../BMS/LT_SPI.c:96:9:spi_read_byte	2
+../BMS/LT_SPI.c:8:6:cs_low	1
+../BMS/LT_SPI.c:14:6:cs_high	1
+../BMS/LT_SPI.c:19:6:spi_write	1
+../BMS/LT_SPI.c:25:6:spi_write_array	2
+../BMS/LT_SPI.c:39:6:spi_write_read	3
+../BMS/LT_SPI.c:65:9:spi_read_byte	2

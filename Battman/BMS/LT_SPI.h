@@ -7,10 +7,6 @@
 #define LTC6811_CHIP_SELECT_GPIO_PIN	SPI1_CS_Pin
 #define LTC6811_CHIP_SELECT_GPIO_PORT	SPI1_CS_GPIO_Port
 
-//Initialize the SPI Peripheral
-
-void LTC6811_Initialize(void);
-
 // cs_low
 
 void cs_low(void);
