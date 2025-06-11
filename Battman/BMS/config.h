@@ -50,19 +50,12 @@ enum DC{ //Cycle time Selection
 	DC0 = 0b11  //~500ms
 };
 
-//enum BMS_State{
-//	Fault,
-//	Running
-//}
-
 //List of Critical events that should be considered including but not limited to:
 const uint8_t HardwareOVP = OV42;
 const uint8_t HardwareUVP = UV21;
 const uint8_t HardwareCellCnt = Cell10;  //number of cells in Serie for hardware protection
 const uint8_t HardwareHysterysis = H0;
 const uint8_t HardwareCycleTime = DC2;
-//float SoftwareOVP = 4.18; // charge end and discharge end voltage take this role
-//float SoftwareUVP = 2.2;
 const float DschgOCP = 60;
 const float ChgOCP = 5;
 const float OverTemp = 80;
@@ -84,6 +77,10 @@ const float SOC = 0; // in %, start value
 float ThermB = 3435;
 float ThermR25 = 10000; // Thermistor Resistance at 25°C
 float ThermRs = 10000; // Series resistance
+
+//Other parameterss
+uint8_t N_Error = 10;	//number of allowed consecutive errors (To be Optimised)
+uint8_t Max_Errors = 20;	//error integrator saturation value (To be Optimised)
 
 
 

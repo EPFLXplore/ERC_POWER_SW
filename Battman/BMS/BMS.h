@@ -11,7 +11,8 @@
 #include "stdbool.h"
 
 #define TOTAL_IC 1	//total number of BMS ICs
-extern uint32_t adcVal[2]; //Array that holds the ADC values (ADC1 and ADC2)
+extern int32_t adc1Val;
+extern int32_t adc2Val;
 
 void readVoltages();	//reads the cell voltages
 void readTemperatures();	//reads the temperatures
@@ -25,5 +26,6 @@ void LEDControl();//control the LED
 void SetHardwareProtection();//set the hardware protection
 bool resetOutputLatch(); //reset the output latch, returns true if successful
 void balancingControl();
+void adcOffsetZero();
 
 #endif /* BMS_H_ */

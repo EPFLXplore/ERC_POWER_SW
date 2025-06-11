@@ -18,7 +18,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "cmsis_os.h"
 #include "adc.h"
 #include "dma.h"
 #include "fdcan.h"
@@ -46,7 +45,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define ADC_CNT_MAX 10 //maximum number of ADC values to read before averaging
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -63,11 +62,16 @@ bool FLAG_TIM4 = false;	//flag for TIM4
 bool FLAG_TIM5 = false;	//flag for TIM5
 bool FLAG_MainTask1=false, FLAG_MainTask2=false, FLAG_MainTask3=false;	//flags for main task
 bool FLAG_WDT = true;	//flag for WDT
+
+//uint32_t adc1CNT = 0, adc2CNT = 0;
+//uint32_t adcVal[2][ADC_CNT_MAX];	//ADC values for current sensors
+float alpha = 0.01f;	//alpha value for exponential moving average filter
+uint32_t adcVal;	//ADC values for current sensors
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-void MX_FREERTOS_Init(void);
+void PeriphCommonClock_Config(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -100,6 +104,9 @@ int main(void)
   /* Configure the system clock */
   SystemClock_Config();
 
+  /* Configure the peripherals common clocks */
+  PeriphCommonClock_Config();
+
   /* USER CODE BEGIN SysInit */
 
   /* USER CODE END SysInit */
@@ -109,6 +116,7 @@ int main(void)
   MX_DMA_Init();
   MX_FDCAN1_Init();
   MX_RTC_Init();
+  MX_USB_Device_Init();
   MX_ADC1_Init();
   MX_SPI1_Init();
   MX_ICACHE_Init();
@@ -130,34 +138,29 @@ int main(void)
   HAL_GPIO_WritePin(LED_Y_GPIO_Port, LED_Y_Pin, GPIO_PIN_RESET);	//turn off yellow LED
   HAL_GPIO_WritePin(LED_G_GPIO_Port, LED_G_Pin, GPIO_PIN_RESET);	//turn off green LED
 
-  //START ADC
-  HAL_ADC_Start_DMA(&hadc1, (uint32_t *)adcVal[0], 1);
-  HAL_ADC_Start_DMA(&hadc2, (uint32_t *)adcVal[1], 1);
+  //START ADCs
+
+  HAL_ADC_Start_IT(&hadc2);
+  HAL_ADC_Start_IT(&hadc1);
+  HAL_ADCEx_Calibration_Start(&hadc1, ADC_DIFFERENTIAL_ENDED) ;
+  HAL_ADCEx_Calibration_Start(&hadc2, ADC_DIFFERENTIAL_ENDED);
+
+//  HAL_ADCEx_MultiModeStart_DMA(&hadc1, (uint32_t*)adcVal, 1);	//start ADC conversion for current sensors, 2 channels in multi mode
 
   //START TIMERS
   HAL_TIM_Base_Start_IT(&htim5); // Triggers Reading of aux conversion
-  HAL_TIM_Base_Start_IT(&htim4); // Triggers aux conversion ad ADCs
+  HAL_TIM_Base_Start_IT(&htim4); // Triggers aux conversion
   HAL_TIM_Base_Start_IT(&htim3); // Triggers Reading of voltage conversion
   HAL_TIM_Base_Start_IT(&htim2); // Triggers voltage conversion
   HAL_TIM_Base_Start_IT(&htim7); // 3khz clock for LTC6801
+//  HAL_TIM_Base_Start_IT(&htim8); // Triggers ADC
 
   HAL_Delay(100);	//wait for 100ms to ensure the system is stable
   resetOutputLatch();	//reset the output latch
   HAL_TIM_Base_Start_IT(&htim1); // pseudo watchdog timer, needs to be reset every 0.5s
-
+  adcOffsetZero();	//zero the ADC offset, this is done once at the beginning of the program
 
   /* USER CODE END 2 */
-
-  /* Init scheduler */
-//  osKernelInitialize();
-
-  /* Call init function for freertos objects (in cmsis_os2.c) */
-//  MX_FREERTOS_Init();
-
-  /* Start scheduler */
-//  osKernelStart();
-
-  /* We should never get here as control is now taken by the scheduler */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
@@ -179,8 +182,8 @@ int main(void)
 		  wakeup_idle(TOTAL_IC);	//wake up daisy-chain from sleep mode
 		  LTC6811_adax(MD_422HZ_1KHZ, AUX_CH_ALL); //should take 1.1 ms for 27KHz mode and 1.3 ms for 14KHz mode
 		  FLAG_TIM4 = false;	//sets the flag to false
-		  HAL_ADC_Start(&hadc1);	//start ADC conversion for current sensor
-		  HAL_ADC_Start(&hadc2);	//start ADC conversion for current sensor
+//		  HAL_ADC_Start(&hadc1);	//start ADC conversion for current sensor
+//		  HAL_ADC_Start(&hadc2);	//start ADC conversion for current sensor
 //		  HAL_GPIO_TogglePin(LED_G_GPIO_Port, LED_Y_Pin);
 	  }
 	  if(FLAG_TIM5){
@@ -251,11 +254,17 @@ void SystemClock_Config(void)
     Error_Handler();
   }
 
+  /** Configure LSE Drive Capability
+  */
+  HAL_PWR_EnableBkUpAccess();
+  __HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_LOW);
+
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSI
-                              |RCC_OSCILLATORTYPE_MSI;
+                              |RCC_OSCILLATORTYPE_LSE|RCC_OSCILLATORTYPE_MSI;
+  RCC_OscInitStruct.LSEState = RCC_LSE_ON;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.LSIDiv = RCC_LSI_DIV1;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
@@ -288,16 +297,75 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+
+  /** Enable MSI Auto calibration
+  */
+  HAL_RCCEx_EnableMSIPLLMode();
+}
+
+/**
+  * @brief Peripherals Common Clock Configuration
+  * @retval None
+  */
+void PeriphCommonClock_Config(void)
+{
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+
+  /** Initializes the common periph clock
+  */
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USB|RCC_PERIPHCLK_ADC;
+  PeriphClkInit.AdcClockSelection = RCC_ADCCLKSOURCE_PLLSAI1;
+  PeriphClkInit.UsbClockSelection = RCC_USBCLKSOURCE_PLLSAI1;
+  PeriphClkInit.PLLSAI1.PLLSAI1Source = RCC_PLLSAI1SOURCE_MSI;
+  PeriphClkInit.PLLSAI1.PLLSAI1M = 1;
+  PeriphClkInit.PLLSAI1.PLLSAI1N = 12;
+  PeriphClkInit.PLLSAI1.PLLSAI1P = RCC_PLLP_DIV7;
+  PeriphClkInit.PLLSAI1.PLLSAI1Q = RCC_PLLQ_DIV2;
+  PeriphClkInit.PLLSAI1.PLLSAI1R = RCC_PLLR_DIV2;
+  PeriphClkInit.PLLSAI1.PLLSAI1ClockOut = RCC_PLLSAI1_48M2CLK|RCC_PLLSAI1_ADC1CLK;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+  {
+    Error_Handler();
+  }
 }
 
 /* USER CODE BEGIN 4 */
-
-//handle the DMA interrupt
-void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
-	currentConvert();	//convert ADC values into current sensor skaling 19.8mV/A
-}
 
+	if(hadc->Instance == ADC1){
+		//read the ADC value for current sensor
+
+		adcVal = HAL_ADC_GetValue(&hadc1);
+		adc1Val = (float)((float)adc1Val*(1-alpha) + (float)adcVal*alpha);	//apply a low-pass filter to the ADC value
+//		adc1CNT++;	//increment the adc counter
+//		if(adc1CNT >= ADC_CNT_MAX){	//if the adc counter reaches the maximum value
+//			adc1CNT = 0;	//reset the adc counter
+//			adc1Val = 0;	//reset the adc1Val to 0
+//			for(int i = 0; i < ADC_CNT_MAX; i++){	//copy the adc values to the adc1Val array
+//				adc1Val += adcVal[0][i];
+//			}
+//			adc1Val /= ADC_CNT_MAX;	//average the adc values
+//		}
+//		HAL_GPIO_TogglePin(Test_GPIO_Port, Test_Pin);	//toggle test pin for debugging
+	}else if(hadc->Instance == ADC2){
+		//read the ADC value for current sensor
+		adcVal = HAL_ADC_GetValue(&hadc2);
+		adc2Val = (float)((float)adc2Val*(1-alpha) + (float)adcVal*alpha);	//apply a low-pass filter to the ADC value
+//		adcVal[1][adc2CNT] = HAL_ADC_GetValue(&hadc2);
+//		adc2CNT++;	//increment the adc counter
+//		if(adc2CNT >= ADC_CNT_MAX){	//if the adc counter reaches the maximum value
+//			adc2CNT = 0;	//reset the adc counter
+//			adc2Val = 0;	//reset the adc2Val to 0
+//			for(int i = 0; i < ADC_CNT_MAX; i++){	//copy the adc values to the adc2Val array
+//				adc2Val += adcVal[1][i];
+//			}
+//			adc2Val /= ADC_CNT_MAX;	//average the adc values
+//		}
+	}
+
+
+}
 /* USER CODE END 4 */
 
 /**

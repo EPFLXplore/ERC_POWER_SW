@@ -13,13 +13,17 @@
 #include "config.h"
 #include <math.h>
 #include <string.h>
+#include "gpio.h"
+#include "adc.h"
 
 cell_asic bms_ic[TOTAL_IC];	//the cell_asic struct objects
 
 float voltages[TOTAL_IC][CellsNbS];	//holds the converted voltages of each cell
 float temperatures[TOTAL_IC][NbTherm];	//holds the Temperatures
 float currents[2]; //holds the current from both sensors
-uint32_t adcVal[2]; //Array that holds the ADC values (ADC1 and ADC2)
+
+int32_t adc1Val, adc1Offset; //holds the ADC value for current sensor 1 and the offset
+int32_t adc2Val, adc2Offset; //holds the ADC value for current sensor 2 and the offset
 
 //LTC CONFIGURATION VARIABLES
 bool REFON = true; //!< Reference Powered Up Bit (true means Vref remains powered on between conversions)
@@ -29,8 +33,7 @@ bool dccBits_a[12] = {false,false,false,false,false,false,false,false,false,fals
 bool dctoBits_a[4] = {false, false, false, false}; //!< Discharge time value // Dcto 0,1,2,3	(all false -> discharge timer disabled)
 uint16_t uv_a = 1000*MinDschgVolt; // The UV register
 uint16_t  ov_a = 1000*ChgEndVolt;// The OV register
-uint8_t N_Error = 10;	//number of allowed consecutive errors (To be Optimised)
-uint8_t Max_Errors = 20;	//error integrator saturation value (To be Optimised)
+
 
 //ERROR COUNTERS
 int8_t cvError = 0,auxError = 0;	//hold if an error has occured while reading cell voltage and aux voltage values
@@ -63,7 +66,6 @@ void LTC6811_init(){
 }
 //convert ADC values into temperature
 void tempConvert(){
-	float innerlog;
 	for (int current_ic = 0; current_ic < TOTAL_IC; current_ic++){
 		for(int sensor = 0; sensor < NbTherm; sensor++){
 			if(bms_ic[current_ic].aux.a_codes[AUX_CH_VREF2-1] == 0x00){
@@ -91,11 +93,27 @@ void readVoltages(){
 void readTemperatures(){
 	auxError = LTC6811_rdaux(AUX_CH_ALL, TOTAL_IC, bms_ic);
 }
-//convert ADC values into current sensor skaling 19.8mV/A
-void currentConvert(){
-	for(int i=0;i<2;i++){
-		currents[i] = adcVal[i]*0.0406901041667;	//19.8mV/A
+
+
+void adcOffsetZero(){
+	//This function is used to zero the ADC offset, it is called once at the beginning of the program
+	//It sets the adc1Val and adc2Val to 2048, which is the middle of the ADC range
+	adc1Offset=adc2Offset=0;
+	for(int i = 0; i < 10; i++){ // Take 10 samples to average the offset
+		HAL_ADC_Start(&hadc1);
+		HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY); // Poll for conversion to complete
+		adc1Offset += HAL_ADC_GetValue(&hadc1); // Read the ADC value for current sensor 2
+		HAL_ADC_Start(&hadc2);
+		HAL_ADC_PollForConversion(&hadc2, HAL_MAX_DELAY); // Poll for conversion to complete
+		adc2Offset += HAL_ADC_GetValue(&hadc2); // Read the ADC value for current sensor 2
 	}
+	adc1Offset /= 10; // Average the offset
+	adc2Offset /= 10; // Average the offset
+}
+//convert ADC values into current sensor skaling 19.8mV/A, ->1 LSB = 40.6901041667mA
+void currentConvert(){
+	currents[0] = (float)(adc1Val-adc1Offset)*0.0050863;///12.3;//*0.0406901041667;	//19.8mV/A
+	currents[1] = (float)(adc2Val-adc2Offset)*0.0050863;///12.3;//*0.0406901041667;	//19.8mV/A
 }
 
 bool resetOutputLatch(){ //as this is a low active RS latch, the output is reset by setting the pin to low
@@ -161,17 +179,17 @@ void errorCheck(){
 			NC[i]--;
 		}
 	}
-	//Check for overcurrent and increase the counting arrays accordingly
-	if(currents[0] > ChgOCP && NOC[0] < Max_Errors){
-		NOC[0]++;
-	}else if(NOC[0] > 0){
-		NOC[0]--;
-	}
-	if(currents[1] > DschgOCP && NOC[1] < Max_Errors){
-		NOC[1]++;
-	}else if(NOC[1] > 0){
-		NOC[1]--;
-	}
+	//Check for overcurrent and increase the counting arrays accordingly disabled as long as current sensor is not working properly
+//	if(currents[0] > ChgOCP && NOC[0] < Max_Errors){
+//		NOC[0]++;
+//	}else if(NOC[0] > 0){
+//		NOC[0]--;
+//	}
+//	if(currents[1] > DschgOCP && NOC[1] < Max_Errors){
+//		NOC[1]++;
+//	}else if(NOC[1] > 0){
+//		NOC[1]--;
+//	}
 	//Output control
 	for (int i = 0; i < TOTAL_IC; i++){
 		for (int j = 0; j < CellsNbS; j++){
@@ -273,17 +291,17 @@ void balancingControl(){
 		//determine deltaV and highest cell
 		float maxVoltage = 0;
 		float minVoltage = 10;
-		float maxCell = 0;
-		float minCell = 0;
+//		float maxCell = 0;
+//		float minCell = 0;
 //		float deltaV = 0;
 		for(int i=0;i<CellsNbS;i++){
 			if(voltages[0][i]>maxVoltage){
 				maxVoltage = voltages[0][i];
-				maxCell = i;
+//				maxCell = i;
 			}
 			if (voltages[0][i]<minVoltage){
 				minVoltage = voltages[0][i];
-				minCell = i;
+//				minCell = i;
 			}
 		}
 		for(int i=0;i<CellsNbS;i++){
@@ -296,5 +314,5 @@ void balancingControl(){
 	}
 }
 void LTC_Selftests(){
-	Hal_GPIO_WritePin(LTCSelfTest_GPIO_Port, LTCSelfTest_Pin, GPIO_PIN_RESET);	//set the self test pin to low
+	HAL_GPIO_WritePin(LTCSelfTest_GPIO_Port, LTCSelfTest_Pin, GPIO_PIN_RESET);	//set the self test pin to low
 }

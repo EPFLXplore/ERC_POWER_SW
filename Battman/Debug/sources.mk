@@ -28,10 +28,6 @@ Core/Startup \
 Drivers/STM32L5xx_HAL_Driver/Src \
 Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src \
 Middlewares/ST/STM32_USB_Device_Library/Core/Src \
-Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 \
-Middlewares/Third_Party/FreeRTOS/Source \
-Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM33_NTZ/non_secure \
-Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang \
 USB_Device/App \
 USB_Device/Target \
 

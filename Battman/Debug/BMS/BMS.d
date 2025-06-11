@@ -41,7 +41,7 @@ BMS/BMS.o: ../BMS/BMS.c ../BMS/BMS.h ../BMS/LTC6811.h ../BMS/LTC681x.h \
  ../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_hal_spi_ex.h \
  ../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_hal_tim.h \
  ../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_hal_tim_ex.h \
- ../BMS/config.h
+ ../BMS/config.h ../Core/Inc/gpio.h ../Core/Inc/main.h ../Core/Inc/adc.h
 ../BMS/BMS.h:
 ../BMS/LTC6811.h:
 ../BMS/LTC681x.h:
@@ -89,3 +89,6 @@ BMS/BMS.o: ../BMS/BMS.c ../BMS/BMS.h ../BMS/LTC6811.h ../BMS/LTC681x.h \
 ../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_hal_tim.h:
 ../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_hal_tim_ex.h:
 ../BMS/config.h:
+../Core/Inc/gpio.h:
+../Core/Inc/main.h:
+../Core/Inc/adc.h:
