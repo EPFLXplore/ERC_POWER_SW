@@ -1,0 +1,13 @@
+../BMS/BMS.c:56:6:LTC6811_init	48	static
+../BMS/BMS.c:68:6:tempConvert	24	static
+../BMS/BMS.c:81:6:readVoltages	16	static
+../BMS/BMS.c:93:6:readTemperatures	8	static
+../BMS/BMS.c:98:6:adcOffsetZero	16	static
+../BMS/BMS.c:114:6:currentConvert	8	static
+../BMS/BMS.c:119:6:resetOutputLatch	8	static
+../BMS/BMS.c:139:6:errorCheck	32	static
+../BMS/BMS.c:238:6:LEDControl	8	static
+../BMS/BMS.c:252:6:outputControl	8	static
+../BMS/BMS.c:265:6:SetHardwareProtection	8	static
+../BMS/BMS.c:289:6:balancingControl	24	static
+../BMS/BMS.c:316:6:LTC_Selftests	8	static

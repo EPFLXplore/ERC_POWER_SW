@@ -40,11 +40,12 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_hal_spi_ex.h \
  ../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_hal_tim.h \
  ../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_hal_tim_ex.h \
- ../USB_Device/App/usb_device.h \
+ ../Core/Inc/adc.h ../Core/Inc/main.h ../Core/Inc/dma.h \
+ ../Core/Inc/fdcan.h ../Core/Inc/icache.h ../Core/Inc/rtc.h \
+ ../Core/Inc/spi.h ../Core/Inc/tim.h ../USB_Device/App/usb_device.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
- ../USB_Device/Target/usbd_conf.h ../Core/Inc/config.h \
- ../Core/Inc/LTC6811.h ../Core/Inc/LTC681x.h ../Core/Inc/LT_SPI.h \
- ../Core/Inc/LT_SPI.h ../Core/Inc/LTC681x.h
+ ../USB_Device/Target/usbd_conf.h ../Core/Inc/gpio.h ../BMS/BMS.h \
+ ../BMS/LTC6811.h ../BMS/LTC681x.h ../BMS/LT_SPI.h
 ../Core/Inc/main.h:
 ../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_hal.h:
 ../Core/Inc/stm32l5xx_hal_conf.h:
@@ -87,12 +88,19 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_hal_spi_ex.h:
 ../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_hal_tim.h:
 ../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_hal_tim_ex.h:
+../Core/Inc/adc.h:
+../Core/Inc/main.h:
+../Core/Inc/dma.h:
+../Core/Inc/fdcan.h:
+../Core/Inc/icache.h:
+../Core/Inc/rtc.h:
+../Core/Inc/spi.h:
+../Core/Inc/tim.h:
 ../USB_Device/App/usb_device.h:
 ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h:
 ../USB_Device/Target/usbd_conf.h:
-../Core/Inc/config.h:
-../Core/Inc/LTC6811.h:
-../Core/Inc/LTC681x.h:
-../Core/Inc/LT_SPI.h:
-../Core/Inc/LT_SPI.h:
-../Core/Inc/LTC681x.h:
+../Core/Inc/gpio.h:
+../BMS/BMS.h:
+../BMS/LTC6811.h:
+../BMS/LTC681x.h:
+../BMS/LT_SPI.h:
