@@ -1,0 +1,11 @@
+../System/Libraries/RoCo/Src/IOBus.cpp:46:6:virtual void IOBus::transmit()	8	static
+../System/Libraries/Utils/LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = std::function<void(unsigned char, void*)>]	0	static
+../System/Libraries/RoCo/Src/IOBus.cpp:22:6:void IOBus::receive(uint8_t, uint8_t*, uint32_t)	24	static
+../System/Libraries/RoCo/Src/IOBus.cpp:32:10:virtual uint32_t IOBus::append(uint8_t*, uint32_t)	16	static
+/Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/arm-none-eabi/include/c++/10.3.1/bits/std_function.h:289:7:) [with _Res = void; _Functor = std::_Bind<void (IOBus::*(IOBus*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(unsigned char, unsigned char*, long unsigned int)>; _ArgTypes = {unsigned char, unsigned char*, long unsigned int}]	16	static
+/Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/arm-none-eabi/include/c++/10.3.1/bits/std_function.h:268:7:), _Functor>::_M_manager(std::_Any_data&, const std::_Any_data&, std::_Manager_operation) [with _Res = void; _Functor = std::_Bind<void (IOBus::*(IOBus*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(unsigned char, unsigned char*, long unsigned int)>; _ArgTypes = {unsigned char, unsigned char*, long unsigned int}]	16	static
+../System/Libraries/RoCo/Src/MessageBus.h:29:10:MessageBus::~MessageBus()	24	static
+../System/Libraries/RoCo/Src/IOBus.h:15:7:IOBus::~IOBus()	8	static
+../System/Libraries/RoCo/Src/IOBus.h:15:7:virtual IOBus::~IOBus()	8	static
+../System/Libraries/RoCo/Src/MessageBus.h:29:10:virtual MessageBus::~MessageBus()	8	static
+../System/Libraries/RoCo/Src/IOBus.cpp:12:1:IOBus::IOBus(IODriver*, uint8_t*, uint32_t)	56	static

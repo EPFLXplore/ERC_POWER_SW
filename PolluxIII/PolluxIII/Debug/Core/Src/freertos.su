@@ -1,0 +1,4 @@
+../Core/Src/freertos.c:133:6:systemd_main	8	static
+../Core/Src/freertos.c:68:13:vApplicationStackOverflowHook	0	static
+../Core/Src/freertos.c:80:6:vApplicationGetIdleTaskMemory	0	static
+../Core/Src/freertos.c:94:6:MX_FREERTOS_Init	48	static

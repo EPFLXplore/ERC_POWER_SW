@@ -1,0 +1,5 @@
+CO_HBconsumer.c:43:13:CO_HBcons_receive	2
+CO_HBconsumer.c:181:25:CO_HBconsumer_initEntry	11
+CO_HBconsumer.c:86:14:OD_write_1016	7
+CO_HBconsumer.c:115:18:CO_HBconsumer_init	13
+CO_HBconsumer.c:359:6:CO_HBconsumer_process	17

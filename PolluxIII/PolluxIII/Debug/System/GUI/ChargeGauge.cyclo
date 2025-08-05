@@ -1,0 +1,11 @@
+ChargeGauge.h:18:2:virtual const char* ChargeGauge::__getSource()	1
+LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = std::function<void()>]	1
+LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = Component*]	1
+ChargeGauge.cpp:27:6:void ChargeGauge::handleBatteryInfo(uint8_t, Power_BatteryInfo*)	3
+std_function.h:289:7:) [with _Res = void; _Functor = std::_Bind<void (ChargeGauge::*(ChargeGauge*, std::_Placeholder<1>, std::_Placeholder<2>))(unsigned char, Power_BatteryInfo*)>; _ArgTypes = {unsigned char, Power_BatteryInfo*}]	2
+std_function.h:268:7:), _Functor>::_M_manager(std::_Any_data&, const std::_Any_data&, std::_Manager_operation) [with _Res = void; _Functor = std::_Bind<void (ChargeGauge::*(ChargeGauge*, std::_Placeholder<1>, std::_Placeholder<2>))(unsigned char, Power_BatteryInfo*)>; _ArgTypes = {unsigned char, Power_BatteryInfo*}]	6
+Component.h:35:10:Component::~Component()	1
+ChargeGauge.cpp:23:1:ChargeGauge::~ChargeGauge()	1
+ChargeGauge.cpp:23:1:virtual ChargeGauge::~ChargeGauge()	1
+Component.h:35:10:virtual Component::~Component()	1
+ChargeGauge.cpp:10:1:ChargeGauge::ChargeGauge(MessageBus*)	2

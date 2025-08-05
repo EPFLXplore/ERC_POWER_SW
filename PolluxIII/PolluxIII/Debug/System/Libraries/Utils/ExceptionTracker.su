@@ -1,0 +1,2 @@
+../System/Libraries/Utils/ExceptionTracker.cpp:13:6:void ExceptionTracker::trackExceptions(ExceptionTracker*)	0	static
+../System/Libraries/Utils/ExceptionTracker.cpp:17:6:void ExceptionTracker::__throwExc(const char*, uint32_t)	32	static

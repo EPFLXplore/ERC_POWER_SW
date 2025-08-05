@@ -1,0 +1,14 @@
+../System/Libraries/CANOpen/301/CO_PDO.c:44:14:OD_write_dummy	0	static
+../System/Libraries/CANOpen/301/CO_PDO.c:87:14:PDOconfigMap	72	static
+../System/Libraries/CANOpen/301/CO_PDO.c:231:14:OD_write_PDO_mapping	32	static
+../System/Libraries/CANOpen/301/CO_PDO.c:465:13:CO_PDO_receive	16	static
+../System/Libraries/CANOpen/301/CO_PDO.c:519:14:OD_write_14xx	56	static
+../System/Libraries/CANOpen/301/CO_PDO.c:944:14:OD_write_18xx	48	static
+../System/Libraries/CANOpen/301/CO_PDO.c:164:25:PDO_initMapping.constprop	72	static
+../System/Libraries/CANOpen/301/CO_PDO.c:412:14:OD_read_PDO_commParam	16	static
+../System/Libraries/CANOpen/301/CO_PDO.c:57:14:OD_read_dummy	16	static
+../System/Libraries/CANOpen/301/CO_PDO.c:1226:25:CO_TPDOsend.isra	64	static
+../System/Libraries/CANOpen/301/CO_PDO.c:627:18:CO_RPDO_init	80	static
+../System/Libraries/CANOpen/301/CO_PDO.c:776:6:CO_RPDO_process	80	static
+../System/Libraries/CANOpen/301/CO_PDO.c:1067:18:CO_TPDO_init	72	static
+../System/Libraries/CANOpen/301/CO_PDO.c:1318:6:CO_TPDO_process	24	static

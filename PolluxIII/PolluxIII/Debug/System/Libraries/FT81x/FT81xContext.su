@@ -1,0 +1,23 @@
+../System/Libraries/FT81x/FT81xContext.h:33:2:virtual const char* FT81xContext::__getSource()	0	static
+../System/Libraries/FT81x/FT81xContext.cpp:97:10:virtual uint32_t FT81xContext::allocateTouchTag()	0	static
+../System/Libraries/FT81x/FT81xContext.cpp:106:9:virtual int32_t FT81xContext::getWidth()	0	static
+../System/Libraries/FT81x/FT81xContext.cpp:110:9:virtual int32_t FT81xContext::getHeight()	0	static
+../System/Libraries/FT81x/FT81xContext.cpp:114:11:virtual Renderer* FT81xContext::getRenderer()	0	static
+../System/Libraries/FT81x/FT81xContext.cpp:118:6:virtual void FT81xContext::setAlpha(uint8_t)	0	static
+../System/Libraries/FT81x/FT81xContext.cpp:123:6:virtual void FT81xContext::setColor(uint32_t)	0	static
+../System/Libraries/FT81x/FT81xContext.cpp:128:6:virtual void FT81xContext::setBackground(uint32_t)	0	static
+../System/Libraries/FT81x/FT81xContext.cpp:133:6:virtual void FT81xContext::setForeground(uint32_t)	0	static
+../System/Libraries/Utils/LinkedList.h:23:10:Iterator<T>::~Iterator() [with T = ColorSet]	0	static
+../System/Libraries/Utils/LinkedList.h:19:2:const char* Iterator<T>::__getSource() [with T = ColorSet]	0	static
+../System/Libraries/Utils/LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = ColorSet]	0	static
+../System/Libraries/FT81x/FT81xContext.cpp:26:6:virtual void FT81xContext::update(Component*)	0	static
+../System/Libraries/FT81x/FT81xContext.cpp:30:6:virtual void FT81xContext::render(Component*)	24	static
+../System/Libraries/FT81x/FT81xContext.cpp:78:6:virtual bool FT81xContext::async(std::function<void()>)	72	static
+../System/Libraries/FT81x/FT81xContext.cpp:68:13:void __async(const void*)	16	static
+../System/Libraries/FT81x/FT81xContext.cpp:138:6:virtual void FT81xContext::pushColorContext()	32	static
+../System/Libraries/Utils/LinkedList.h:23:10:Iterator<T>::~Iterator() [with T = ColorSet]	8	static
+../System/Libraries/FT81x/FT81xContext.h:31:7:FT81xContext::~FT81xContext()	8	static
+../System/Libraries/FT81x/FT81xContext.h:31:7:virtual FT81xContext::~FT81xContext()	8	static
+../System/Libraries/Utils/LinkedList.h:278:32:Iterator<T> LinkedList<T>::it() [with T = ColorSet]	16	static
+../System/Libraries/FT81x/FT81xContext.cpp:144:6:virtual void FT81xContext::popColorContext()	96	static
+../System/Libraries/FT81x/FT81xContext.cpp:11:1:FT81xContext::FT81xContext(QSPIWrapper*, Console*)	32	static

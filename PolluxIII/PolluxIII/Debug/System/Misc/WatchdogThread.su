@@ -1,0 +1,5 @@
+../System/Misc/../Thread.h:20:2:virtual const char* Thread::__getSource()	0	static
+../System/Misc/WatchdogThread.cpp:17:6:virtual void WatchdogThread::init()	0	static
+../System/Misc/WatchdogThread.h:13:7:WatchdogThread::~WatchdogThread()	0	static
+../System/Misc/WatchdogThread.cpp:21:6:virtual void WatchdogThread::loop()	0	static
+../System/Misc/WatchdogThread.h:13:7:virtual WatchdogThread::~WatchdogThread()	8	static

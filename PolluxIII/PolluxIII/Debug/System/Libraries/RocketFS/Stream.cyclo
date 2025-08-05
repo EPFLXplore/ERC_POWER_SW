@@ -1,0 +1,15 @@
+Stream.cpp:12:1:Stream::Stream(IO*, uint32_t, FileType)	1
+Stream.cpp:21:6:void Stream::close()	2
+Stream.cpp:29:9:int32_t Stream::read(uint8_t*, uint32_t)	5
+Stream.cpp:60:9:uint8_t Stream::read8()	1
+Stream.cpp:66:10:uint16_t Stream::read16()	1
+Stream.cpp:78:10:uint32_t Stream::read32()	1
+Stream.cpp:92:10:uint64_t Stream::read64()	1
+Stream.cpp:110:6:void Stream::write(uint8_t*, uint32_t)	5
+Stream.cpp:139:6:void Stream::write8(uint8_t)	1
+Stream.cpp:143:6:void Stream::write16(uint16_t)	1
+Stream.cpp:152:6:void Stream::write32(uint32_t)	1
+Stream.cpp:163:6:void Stream::write64(uint64_t)	1
+Stream.cpp:178:6:void Stream::seek(uint32_t)	1
+Stream.cpp:183:6:bool Stream::isEOF()	1
+Stream.cpp:187:10:FileType Stream::getFileType()	1

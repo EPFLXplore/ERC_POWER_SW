@@ -1,0 +1,12 @@
+../System/Libraries/EmbeddedGL/Components/Component.h:32:2:virtual const char* Component::__getSource()	0	static
+../System/Libraries/EmbeddedGL/Components/Gauge.cpp:15:6:virtual void Gauge::render(Renderer*)	48	static
+../System/Libraries/Utils/LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = std::function<void()>]	0	static
+../System/Libraries/Utils/LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = Component*]	0	static
+../System/Libraries/EmbeddedGL/Components/Gauge.cpp:26:6:virtual void Gauge::onContextReady(Context*)	0	static
+../System/Libraries/EmbeddedGL/Components/Component.h:35:10:Component::~Component()	8	static
+../System/Libraries/EmbeddedGL/Components/Gauge.h:15:7:Gauge::~Gauge()	8	static
+../System/Libraries/EmbeddedGL/Components/Gauge.h:15:7:virtual Gauge::~Gauge()	8	static
+../System/Libraries/EmbeddedGL/Components/Component.h:35:10:virtual Component::~Component()	8	static
+../System/Libraries/EmbeddedGL/Components/Gauge.cpp:11:1:Gauge::Gauge()	8	static
+../System/Libraries/EmbeddedGL/Components/Gauge.cpp:30:8:Gauge* Gauge::setRadius(float)	0	static
+../System/Libraries/EmbeddedGL/Components/Gauge.cpp:35:8:Gauge* Gauge::setLevel(float)	0	static

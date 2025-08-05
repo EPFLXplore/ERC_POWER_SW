@@ -1,0 +1,12 @@
+../System/Libraries/EmbeddedGL/Components/Component.h:32:2:virtual const char* Component::__getSource()	0	static
+../System/Libraries/Utils/LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = std::function<void()>]	0	static
+../System/Libraries/Utils/LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = Component*]	0	static
+../System/Libraries/EmbeddedGL/Components/Box.cpp:16:6:virtual void Box::render(Renderer*)	64	static
+../System/Libraries/EmbeddedGL/Components/Component.h:35:10:Component::~Component()	8	static
+../System/Libraries/EmbeddedGL/Components/Box.h:13:7:virtual Box::~Box()	8	static
+../System/Libraries/EmbeddedGL/Components/Box.h:13:7:virtual Box::~Box()	8	static
+../System/Libraries/EmbeddedGL/Components/Component.h:35:10:virtual Component::~Component()	8	static
+../System/Libraries/EmbeddedGL/Components/Box.cpp:12:1:Box::Box()	0	static
+../System/Libraries/EmbeddedGL/Components/Box.cpp:12:1:Box::Box()	8	static
+../System/Libraries/EmbeddedGL/Components/Box.cpp:59:6:Box* Box::setBorderRadius(float)	0	static
+../System/Libraries/EmbeddedGL/Components/Box.h:13:7:Box::~Box()	0	static

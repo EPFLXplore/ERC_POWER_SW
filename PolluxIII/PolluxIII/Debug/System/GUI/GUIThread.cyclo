@@ -1,0 +1,7 @@
+QSPIWrapper.h:18:2:virtual const char* QSPIWrapper::__getSource()	1
+GUIThread.h:19:2:virtual const char* GUIThread::__getSource()	1
+GUIThread.cpp:35:6:virtual void GUIThread::loop()	1
+GUIThread.cpp:20:6:virtual void GUIThread::init()	1
+GUIThread.cpp:12:1:GUIThread::GUIThread(SPI_HandleTypeDef*, MessageBus*)	1
+GUIThread.cpp:16:1:GUIThread::~GUIThread()	2
+GUIThread.cpp:16:1:virtual GUIThread::~GUIThread()	1

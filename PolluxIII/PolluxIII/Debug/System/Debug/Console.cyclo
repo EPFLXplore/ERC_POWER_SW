@@ -1,0 +1,6 @@
+Console.cpp:19:1:Console::Console(UART_HandleTypeDef*)	1
+Console.cpp:24:6:void Console::lock()	1
+Console.cpp:28:6:void Console::unlock()	1
+Console.cpp:32:6:void Console::transmit(uint8_t*, uint32_t)	1
+Console.cpp:36:6:void Console::print(const char*)	1
+Console.cpp:42:6:)	2

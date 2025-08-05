@@ -1,0 +1,15 @@
+../System/Libraries/EmbeddedGL/Components/Text.h:28:2:virtual const char* Text::__getSource()	0	static
+../System/Libraries/EmbeddedGL/Components/Text.cpp:17:6:virtual void Text::render(Renderer*)	16	static
+../System/Libraries/Utils/LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = std::function<void()>]	0	static
+../System/Libraries/Utils/LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = Component*]	0	static
+../System/Libraries/EmbeddedGL/Components/Text.h:28:2:virtual const char* Text::_ZTv0_n12_N4Text11__getSourceEv()	0	static
+../System/Libraries/EmbeddedGL/Components/Component.h:35:10:Component::~Component()	8	static
+../System/Libraries/EmbeddedGL/Components/Text.h:26:7:virtual Text::~Text()	8	static
+../System/Libraries/EmbeddedGL/Components/Text.h:26:7:virtual Text::~Text()	8	static
+../System/Libraries/EmbeddedGL/Components/Component.h:35:10:virtual Component::~Component()	8	static
+../System/Libraries/EmbeddedGL/Components/Text.cpp:13:1:Text::Text()	0	static
+../System/Libraries/EmbeddedGL/Components/Text.cpp:13:1:Text::Text()	8	static
+../System/Libraries/EmbeddedGL/Components/Text.cpp:47:7:Text* Text::setText(const char*)	16	static
+../System/Libraries/EmbeddedGL/Components/Text.cpp:55:7:Text* Text::setFontSize(uint8_t)	0	static
+../System/Libraries/EmbeddedGL/Components/Text.cpp:60:7:Text* Text::setAnchor(Anchor)	0	static
+../System/Libraries/EmbeddedGL/Components/Text.h:26:7:Text::~Text()	0	static

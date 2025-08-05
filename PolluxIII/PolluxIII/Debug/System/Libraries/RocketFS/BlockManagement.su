@@ -1,0 +1,14 @@
+../System/Libraries/RocketFS/BlockManagement.cpp:195:6:void FileSystem::free(uint16_t)	0	static
+../System/Libraries/RocketFS/BlockManagement.cpp:354:10:uint32_t FileSystem::computeLengthFromUsage(uint64_t)	8	static
+../System/Libraries/RocketFS/BlockManagement.cpp:324:10:uint32_t FileSystem::computeLength(uint16_t)	24	static
+../System/Libraries/RocketFS/BlockManagement.cpp:291:10:uint16_t FileSystem::loadFileMeta(File*)	32	static
+../System/Libraries/RocketFS/BlockManagement.cpp:21:6:void FileSystem::initBlockManagement()	120	static
+../System/Libraries/RocketFS/BlockManagement.cpp:368:10:uint32_t FileSystem::getBaseAddress(uint16_t)	0	static
+../System/Libraries/RocketFS/BlockManagement.cpp:397:6:bool FileSystem::checkHeader(uint16_t)	40	static
+../System/Libraries/RocketFS/BlockManagement.cpp:419:6:void FileSystem::updateUsageTable(uint32_t, uint32_t)	32	static
+../System/Libraries/RocketFS/BlockManagement.cpp:314:6:void FileSystem::protect(uint16_t)	4	static
+../System/Libraries/RocketFS/BlockManagement.cpp:377:6:void FileSystem::writeHeader(uint16_t, uint16_t, uint16_t)	24	static
+../System/Libraries/RocketFS/BlockManagement.cpp:466:6:void FileSystem::decreaseRelativeTime()	0	static
+../System/Libraries/RocketFS/BlockManagement.cpp:457:6:void FileSystem::updateRelativeTime()	0	static
+../System/Libraries/RocketFS/BlockManagement.cpp:110:10:uint16_t FileSystem::alloc(FileType)	48	static
+../System/Libraries/RocketFS/BlockManagement.cpp:214:9:virtual int32_t FileSystem::access(uint32_t*, uint32_t, AccessType)	56	static

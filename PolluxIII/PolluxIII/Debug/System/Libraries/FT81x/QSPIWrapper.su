@@ -1,0 +1,5 @@
+../System/Libraries/FT81x/QSPIWrapper.cpp:17:19:HAL_StatusTypeDef QSPIWrapper::setup(uint32_t)	16	static
+../System/Libraries/FT81x/QSPIWrapper.cpp:138:19:HAL_StatusTypeDef QSPIWrapper::flush(uint32_t)	0	static
+../System/Libraries/FT81x/QSPIWrapper.cpp:31:19:HAL_StatusTypeDef QSPIWrapper::run(QSPI_CommandTypeDef*, uint32_t)	20	static
+../System/Libraries/FT81x/QSPIWrapper.cpp:98:19:HAL_StatusTypeDef QSPIWrapper::transmit(uint8_t*, uint32_t)	24	static
+../System/Libraries/FT81x/QSPIWrapper.cpp:113:19:HAL_StatusTypeDef QSPIWrapper::receive(uint8_t*, uint32_t)	24	static

@@ -1,0 +1,16 @@
+CO_driver_stm32h735g-dk.c:410:1:prv_send_can_message	11
+CO_driver_stm32h735g-dk.c:575:1:prv_read_can_received_msg.constprop	16
+CO_driver_stm32h735g-dk.c:94:1:CO_CANsetConfigurationMode	2
+CO_driver_stm32h735g-dk.c:103:1:CO_CANsetNormalMode	3
+CO_driver_stm32h735g-dk.c:112:1:CO_CANmodule_init	10
+CO_driver_stm32h735g-dk.c:330:1:CO_CANmodule_disable	3
+CO_driver_stm32h735g-dk.c:338:1:CO_CANrxBufferInit	6
+CO_driver_stm32h735g-dk.c:379:1:CO_CANtxBufferInit	3
+CO_driver_stm32h735g-dk.c:450:1:CO_CANsend	4
+CO_driver_stm32h735g-dk.c:482:1:CO_CANclearPendingSyncPDOs	7
+CO_driver_stm32h735g-dk.c:518:1:CO_CANmodule_process	2
+CO_driver_stm32h735g-dk.c:637:1:HAL_FDCAN_RxFifo0Callback	2
+CO_driver_stm32h735g-dk.c:650:1:HAL_FDCAN_RxFifo1Callback	2
+CO_driver_stm32h735g-dk.c:663:1:HAL_FDCAN_TxBufferCompleteCallback	5
+CO_driver_stm32h735g-dk.c:701:1:FDCAN1_IT0_IRQHandler	1
+CO_driver_stm32h735g-dk.c:712:1:FDCAN1_IT1_IRQHandler	1

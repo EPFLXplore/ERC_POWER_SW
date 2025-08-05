@@ -1,0 +1,19 @@
+FileSystem.cpp:524:6:virtual void FileSystem::read(uint32_t, uint8_t*, uint32_t)	1
+FileSystem.cpp:528:6:virtual void FileSystem::write(uint32_t, uint8_t*, uint32_t)	1
+FileSystem.cpp:536:13:void __no_log(const char*)	1
+FileSystem.h:39:7:FileSystem::~FileSystem()	1
+FileSystem.h:39:7:virtual FileSystem::~FileSystem()	1
+FileSystem.cpp:256:6:virtual void FileSystem::flush()	4
+FileSystem.cpp:56:1:FileSystem::FileSystem(const char*, uint32_t, uint32_t)	4
+FileSystem.cpp:101:6:void FileSystem::setLogger(void (*)(const char*))	1
+FileSystem.cpp:108:6:void FileSystem::bind(void (*)(uint32_t, uint8_t*, uint32_t), void (*)(uint32_t, uint8_t*, uint32_t), void (*)(uint32_t))	2
+FileSystem.cpp:203:6:void FileSystem::format()	2
+FileSystem.cpp:123:6:void FileSystem::mount()	16
+FileSystem.cpp:438:6:void FileSystem::checkMounted()	2
+FileSystem.cpp:190:6:void FileSystem::unmount()	1
+FileSystem.cpp:291:7:File* FileSystem::newFile(const char*, FileType)	4
+FileSystem.cpp:343:6:void FileSystem::delFile(File*)	3
+FileSystem.cpp:375:7:File* FileSystem::getFile(const char*)	4
+FileSystem.cpp:400:6:bool FileSystem::touch(File*)	1
+FileSystem.cpp:409:8:Stream FileSystem::openStream(File*, StreamMode)	3
+FileSystem.cpp:532:10:uint32_t FileSystem::getTotalUsedBlocks()	1

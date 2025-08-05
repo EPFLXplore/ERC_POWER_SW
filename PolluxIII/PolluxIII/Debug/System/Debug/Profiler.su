@@ -1,0 +1,4 @@
+../System/Debug/Profiler.cpp:15:6:void Profiler::start(uint8_t)	40	static
+../System/Debug/Profiler.cpp:46:6:void Profiler::end()	56	static
+../System/Debug/Profiler.cpp:96:6:void Profiler::enable()	0	static
+../System/Debug/Profiler.cpp:104:6:void Profiler::disable()	0	static

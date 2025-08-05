@@ -1,0 +1,6 @@
+../System/Libraries/CANOpen/305/CO_LSSslave.c:52:13:CO_LSSslave_receive	16	static
+../System/Libraries/CANOpen/305/CO_LSSslave.c:206:18:CO_LSSslave_init	48	static
+../System/Libraries/CANOpen/305/CO_LSSslave.c:287:6:CO_LSSslave_initCheckBitRateCallback	0	static
+../System/Libraries/CANOpen/305/CO_LSSslave.c:300:6:CO_LSSslave_initActivateBitRateCallback	0	static
+../System/Libraries/CANOpen/305/CO_LSSslave.c:313:6:CO_LSSslave_initCfgStoreCallback	0	static
+../System/Libraries/CANOpen/305/CO_LSSslave.c:326:8:CO_LSSslave_process	16	static

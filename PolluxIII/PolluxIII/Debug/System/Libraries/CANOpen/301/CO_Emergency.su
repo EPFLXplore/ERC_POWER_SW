@@ -1,0 +1,6 @@
+../System/Libraries/CANOpen/301/CO_Emergency.c:182:14:OD_read_1003	12	static
+../System/Libraries/CANOpen/301/CO_Emergency.c:222:14:OD_write_1003	8	static
+../System/Libraries/CANOpen/301/CO_Emergency.c:129:14:OD_read_1014_default	12	static
+../System/Libraries/CANOpen/301/CO_Emergency.c:344:18:CO_EM_init	56	static
+../System/Libraries/CANOpen/301/CO_Emergency.c:713:6:CO_error	20	static,ignoring_inline_asm
+../System/Libraries/CANOpen/301/CO_Emergency.c:554:6:CO_EM_process	32	static

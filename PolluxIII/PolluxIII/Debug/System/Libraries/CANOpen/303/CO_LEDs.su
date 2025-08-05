@@ -1,0 +1,2 @@
+../System/Libraries/CANOpen/303/CO_LEDs.c:31:18:CO_LEDs_init	0	static
+../System/Libraries/CANOpen/303/CO_LEDs.c:47:6:CO_LEDs_process	36	static

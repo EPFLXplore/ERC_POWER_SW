@@ -1,0 +1,13 @@
+../System/GUI/MainScreen.h:23:2:virtual const char* MainScreen::__getSource()	0	static
+../System/Libraries/Utils/LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = std::function<void()>]	0	static
+../System/Libraries/Utils/LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = Component*]	0	static
+../System/GUI/MainScreen.cpp:61:6:void MainScreen::showDetailedStats(PowerMonitor)	8	static
+/Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/arm-none-eabi/include/c++/10.3.1/bits/std_function.h:289:7:) [with _Res = void; _Functor = std::_Bind<void (MainScreen::*(MainScreen*, PowerMonitor))(PowerMonitor)>; _ArgTypes = {}]	8	static
+/Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/arm-none-eabi/include/c++/10.3.1/bits/std_function.h:268:7:), _Functor>::_M_manager(std::_Any_data&, const std::_Any_data&, std::_Manager_operation) [with _Res = void; _Functor = std::_Bind<void (MainScreen::*(MainScreen*, PowerMonitor))(PowerMonitor)>; _ArgTypes = {}]	16	static
+/Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/arm-none-eabi/include/c++/10.3.1/bits/std_function.h:242:5:std::_Function_base::~_Function_base()	8	static
+../System/Libraries/EmbeddedGL/Components/Component.h:35:10:Component::~Component()	8	static
+../System/GUI/MainScreen.cpp:50:1:MainScreen::~MainScreen()	8	static
+../System/GUI/MainScreen.cpp:50:1:virtual MainScreen::~MainScreen()	8	static
+../System/Libraries/EmbeddedGL/Components/Component.h:35:10:virtual Component::~Component()	8	static
+/Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/arm-none-eabi/include/c++/10.3.1/bits/std_function.h:601:7:)>::function(_Functor) [with _Functor = std::_Bind<void (MainScreen::*(MainScreen*, PowerMonitor))(PowerMonitor)>; <template-parameter-2-2> = void; <template-parameter-2-3> = void; _Res = void; _ArgTypes = {}]	16	static
+../System/GUI/MainScreen.cpp:12:1:MainScreen::MainScreen(MessageBus*)	56	static

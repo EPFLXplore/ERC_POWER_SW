@@ -1,0 +1,5 @@
+../System/Libraries/CANOpen/301/CO_SYNC.c:37:13:CO_SYNC_receive	0	static
+../System/Libraries/CANOpen/301/CO_SYNC.c:161:14:OD_write_1019	40	static
+../System/Libraries/CANOpen/301/CO_SYNC.c:83:14:OD_write_1005	48	static
+../System/Libraries/CANOpen/301/CO_SYNC.c:205:18:CO_SYNC_init	72	static
+../System/Libraries/CANOpen/301/CO_SYNC.c:356:18:CO_SYNC_process	32	static

@@ -1,0 +1,16 @@
+../System/Libraries/EmbeddedGL/Components/Component.h:32:2:virtual const char* Component::__getSource()	0	static
+../System/GUI/PowerBox.h:19:2:virtual const char* PowerBox::__getSource()	0	static
+../System/GUI/UnregulatedBox.h:16:2:virtual const char* UnregulatedBox::__getSource()	0	static
+../System/Libraries/Utils/LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = std::function<void()>]	0	static
+../System/Libraries/Utils/LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = Component*]	0	static
+../System/GUI/UnregulatedBox.cpp:11:1:UnregulatedBox::UnregulatedBox(MessageBus*, PowerMonitor)	32	static
+../System/GUI/UnregulatedBox.h:16:2:virtual const char* UnregulatedBox::_ZTv0_n12_N14UnregulatedBox11__getSourceEv()	0	static
+../System/GUI/PowerBox.h:19:2:virtual const char* PowerBox::_ZTv0_n12_N8PowerBox11__getSourceEv()	0	static
+../System/Libraries/EmbeddedGL/Components/Component.h:35:10:Component::~Component()	8	static
+../System/Libraries/EmbeddedGL/Components/Component.h:35:10:virtual Component::~Component()	8	static
+../System/GUI/UnregulatedBox.cpp:11:1:UnregulatedBox::UnregulatedBox(MessageBus*, PowerMonitor)	16	static
+../System/GUI/UnregulatedBox.cpp:11:1:UnregulatedBox::UnregulatedBox(MessageBus*, PowerMonitor)	16	static
+../System/GUI/UnregulatedBox.h:14:7:virtual UnregulatedBox::~UnregulatedBox()	16	static
+../System/GUI/UnregulatedBox.h:14:7:virtual UnregulatedBox::~UnregulatedBox()	0	static
+../System/GUI/UnregulatedBox.h:14:7:virtual UnregulatedBox::~UnregulatedBox()	8	static
+../System/GUI/UnregulatedBox.h:14:7:UnregulatedBox::~UnregulatedBox()	0	static

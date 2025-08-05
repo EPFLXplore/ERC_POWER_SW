@@ -1,0 +1,4 @@
+../System/Libraries/CANOpen/301/CO_NMT_Heartbeat.c:36:13:CO_NMT_receive	0	static
+../System/Libraries/CANOpen/301/CO_NMT_Heartbeat.c:62:14:OD_write_1017	16	static
+../System/Libraries/CANOpen/301/CO_NMT_Heartbeat.c:83:18:CO_NMT_init	56	static
+../System/Libraries/CANOpen/301/CO_NMT_Heartbeat.c:221:20:CO_NMT_process	24	static

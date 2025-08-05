@@ -1,0 +1,167 @@
+../System/Libraries/FT81x/FT81xRenderer.cpp:1893:6:virtual void FT81xRenderer::clear_color_rgb888(uint8_t, uint8_t, uint8_t)	0	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1958:6:virtual void FT81xRenderer::color_rgb888(uint8_t, uint8_t, uint8_t)	0	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2509:6:virtual void FT81xRenderer::fgcolor_rgb888(uint8_t, uint8_t, uint8_t)	0	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2525:6:virtual void FT81xRenderer::bgcolor_rgb888(uint8_t, uint8_t, uint8_t)	0	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2541:6:virtual void FT81xRenderer::cmd_gradcolor_rgb888(uint8_t, uint8_t, uint8_t)	0	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2934:6:virtual void FT81xRenderer::calibrate()	24	static
+../System/Libraries/FT81x/FT81xRenderer.h:331:7:FT81xRenderer::~FT81xRenderer()	0	static
+../System/Libraries/FT81x/FT81xRenderer.h:331:7:virtual FT81xRenderer::~FT81xRenderer()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1373:6:virtual void FT81xRenderer::checkfree(uint16_t)	0	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:156:6:void FT81xRenderer::assert_cs(bool)	0	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:46:1:FT81xRenderer::FT81xRenderer(QSPIWrapper*, Console*)	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:50:6:void FT81xRenderer::load_default_command(QSPI_CommandTypeDef*)	0	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:156:6:void FT81xRenderer::assert_cs(bool)	0	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1343:6:virtual void FT81xRenderer::stream_stop()	0	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:235:6:void FT81xRenderer::test_black_screen()	0	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:283:6:void FT81xRenderer::test_logo()	0	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:493:6:void FT81xRenderer::test_load_image()	0	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:524:6:void FT81xRenderer::test_memory_ops()	0	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:604:6:void FT81xRenderer::test_display()	0	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:635:6:void FT81xRenderer::test_cycle_colors()	0	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:681:6:void FT81xRenderer::test_dots()	0	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:773:10:uint32_t FT81xRenderer::getwp()	0	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:783:6:void FT81xRenderer::hostcmd_param(uint8_t, uint8_t)	80	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:823:9:uint8_t FT81xRenderer::rd(uint32_t)	80	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:67:6:void FT81xRenderer::restart_core()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1522:6:virtual bool FT81xRenderer::multi_touch_enabled()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1526:9:virtual uint8_t FT81xRenderer::touch_mode()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:867:10:uint16_t FT81xRenderer::rd16(uint32_t)	80	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:123:6:bool FT81xRenderer::read_chip_id()	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:911:10:uint32_t FT81xRenderer::rd32(uint32_t)	80	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:972:6:void FT81xRenderer::rdn(uint32_t, uint8_t*, int8_t)	80	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:955:6:void FT81xRenderer::rdN(uint32_t, uint8_t*, int8_t)	24	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1534:23:virtual touch_input_t* FT81xRenderer::fetch_touch_inputs()	64	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1011:6:void FT81xRenderer::wr(uint32_t, uint8_t)	80	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:193:6:void FT81xRenderer::init_touch_settings()	0	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:198:6:void FT81xRenderer::init_audio_settings()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1518:6:virtual void FT81xRenderer::multi_touch_enable(bool)	0	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1049:6:void FT81xRenderer::wr16(uint32_t, uint16_t)	80	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:96:6:bool FT81xRenderer::test_comm()	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:142:6:void FT81xRenderer::select_spi_byte_width()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:207:6:void FT81xRenderer::init_gpio()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:239:6:void FT81xRenderer::test_sound()	24	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1087:6:void FT81xRenderer::wr32(uint32_t, uint32_t)	80	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:165:6:void FT81xRenderer::init_display_settings()	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:736:6:void FT81xRenderer::sleep()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:750:6:void FT81xRenderer::wake(uint8_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1125:6:void FT81xRenderer::wrA(uint32_t)	72	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1332:6:virtual void FT81xRenderer::stream_start()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1161:6:void FT81xRenderer::wrN(uint8_t*, uint8_t)	72	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1197:6:void FT81xRenderer::cSPOOL_MF(uint8_t*, int32_t)	40	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1302:10:uint16_t FT81xRenderer::fifo_rp()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:765:6:void FT81xRenderer::fifo_reset()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:687:6:bool FT81xRenderer::init_gpu()	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1353:6:virtual void FT81xRenderer::getfree(uint16_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1504:6:virtual void FT81xRenderer::wait_finish()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1406:6:void FT81xRenderer::cmd32(uint32_t)	72	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1388:6:void FT81xRenderer::cI(uint32_t)	0	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1644:6:virtual void FT81xRenderer::alpha_funct(uint8_t, uint8_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1659:6:virtual void FT81xRenderer::begin(uint8_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1670:6:virtual void FT81xRenderer::bitmap_handle(uint8_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1681:6:virtual void FT81xRenderer::bitmap_layout(uint8_t, uint16_t, uint16_t)	24	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1697:6:virtual void FT81xRenderer::bitmap_layout_h(uint8_t, uint8_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1712:6:virtual void FT81xRenderer::bitmap_size(uint8_t, uint8_t, uint8_t, uint16_t, uint16_t)	32	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1731:6:virtual void FT81xRenderer::bitmap_size_h(uint8_t, uint8_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1742:6:virtual void FT81xRenderer::bitmap_source(uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1753:6:virtual void FT81xRenderer::bitmap_transform_a(uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1764:6:virtual void FT81xRenderer::bitmap_transform_b(uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1775:6:virtual void FT81xRenderer::bitmap_transform_c(uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1786:6:virtual void FT81xRenderer::bitmap_transform_d(uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1797:6:virtual void FT81xRenderer::bitmap_transform_e(uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1808:6:virtual void FT81xRenderer::bitmap_transform_f(uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1819:6:virtual void FT81xRenderer::blend_func(uint8_t, uint8_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1830:6:virtual void FT81xRenderer::call(uint16_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1841:6:virtual void FT81xRenderer::cell(uint8_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1852:6:virtual void FT81xRenderer::clear()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1858:6:virtual void FT81xRenderer::clearCST(uint8_t, uint8_t, uint8_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1876:6:virtual void FT81xRenderer::clear_color_a(uint8_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1887:6:virtual void FT81xRenderer::clear_color_rgb32(uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1904:6:virtual void FT81xRenderer::clear_stencil(uint8_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1915:6:virtual void FT81xRenderer::clear_tag(uint8_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1926:6:virtual void FT81xRenderer::color_a(uint8_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1937:6:virtual void FT81xRenderer::color_mask(uint8_t, uint8_t, uint8_t, uint8_t)	24	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1952:6:virtual void FT81xRenderer::color_rgb32(uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1969:6:virtual void FT81xRenderer::display()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1980:6:virtual void FT81xRenderer::end()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1991:6:virtual void FT81xRenderer::jump(uint16_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2002:6:virtual void FT81xRenderer::line_width(uint16_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2013:6:virtual void FT81xRenderer::macro(uint8_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2024:6:virtual void FT81xRenderer::nop()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2035:6:virtual void FT81xRenderer::palette_source(uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2046:6:virtual void FT81xRenderer::point_size(uint16_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2057:6:virtual void FT81xRenderer::restore_context()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2068:6:virtual void FT81xRenderer::return_call()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2079:6:virtual void FT81xRenderer::save_context()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2090:6:virtual void FT81xRenderer::scissor_size(uint16_t, uint16_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2103:6:virtual void FT81xRenderer::scissor_xy(uint16_t, uint16_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2114:6:virtual void FT81xRenderer::stencil_func(uint8_t, uint8_t, uint8_t)	24	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2127:6:virtual void FT81xRenderer::stencil_mask(uint8_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2138:6:virtual void FT81xRenderer::stencil_op(uint8_t, uint8_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2150:6:virtual void FT81xRenderer::tag(uint8_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2161:6:virtual void FT81xRenderer::tag_mask(uint8_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2173:6:virtual void FT81xRenderer::vertex2f(int16_t, int16_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2185:6:virtual void FT81xRenderer::vertex2ii(int16_t, int16_t, uint8_t, uint8_t)	24	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2202:6:virtual void FT81xRenderer::vertex_format(int8_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2213:6:virtual void FT81xRenderer::vertex_translate_x(uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2224:6:virtual void FT81xRenderer::vertex_translate_y(uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1397:6:void FT81xRenderer::cFFFFFF(uint8_t)	0	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2235:6:virtual void FT81xRenderer::cmd_dlstart()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2246:6:virtual void FT81xRenderer::cmd_swap()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2257:6:virtual void FT81xRenderer::cmd_coldstart()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2268:6:virtual void FT81xRenderer::cmd_interrupt(uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2280:6:virtual void FT81xRenderer::cmd_append(uint32_t, uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2293:6:virtual void FT81xRenderer::cmd_regread(uint32_t, uint32_t*)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2313:6:virtual void FT81xRenderer::cmd_memwrite(uint32_t, uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2325:6:virtual void FT81xRenderer::cmd_inflate(uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2337:6:virtual void FT81xRenderer::cmd_loadimage(uint32_t, uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2350:6:virtual void FT81xRenderer::cmd_mediafifo(uint32_t, uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2366:6:virtual void FT81xRenderer::cmd_playvideo(uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2377:6:virtual void FT81xRenderer::cmd_videostart()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2387:6:virtual void FT81xRenderer::cmd_videoframe(uint32_t, uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2399:10:virtual uint32_t FT81xRenderer::cmd_memcrc(uint32_t, uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2419:6:virtual void FT81xRenderer::cmd_memzero(uint32_t, uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2431:6:virtual void FT81xRenderer::cmd_memset(uint32_t, uint32_t, uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2443:6:virtual void FT81xRenderer::cmd_memcpy(uint32_t, uint32_t, uint32_t)	24	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2503:6:virtual void FT81xRenderer::fgcolor_rgb32(uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2519:6:virtual void FT81xRenderer::bgcolor_rgb32(uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2535:6:virtual void FT81xRenderer::cmd_gradcolor_rgb32(uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2751:6:virtual void FT81xRenderer::cmd_setbase(uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2782:6:virtual void FT81xRenderer::cmd_loadidentity()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2792:6:virtual void FT81xRenderer::cmd_setmatrix()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2802:6:virtual void FT81xRenderer::cmd_getmatrix(int32_t*, int32_t*, int32_t*, int32_t*, int32_t*, int32_t*)	24	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2837:6:virtual void FT81xRenderer::cmd_getptr(uint32_t*)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2857:6:virtual void FT81xRenderer::cmd_getprops(uint32_t*, uint32_t*, uint32_t*)	24	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2884:6:virtual void FT81xRenderer::cmd_scale(int32_t, int32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2896:6:virtual void FT81xRenderer::cmd_rotate(int32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2907:6:virtual void FT81xRenderer::cmd_translate(int32_t, int32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2919:6:virtual void FT81xRenderer::cmd_calibrate(uint32_t*)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2957:6:virtual void FT81xRenderer::cmd_setrotate(uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2997:6:virtual void FT81xRenderer::cmd_screensaver()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:3027:6:virtual void FT81xRenderer::cmd_stop()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:3037:6:virtual void FT81xRenderer::cmd_setfont(uint32_t, uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:3049:6:virtual void FT81xRenderer::cmd_setfont2(uint32_t, uint32_t, uint32_t, uint32_t)	24	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:3063:6:virtual void FT81xRenderer::cmd_setscratch(uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:3074:6:virtual void FT81xRenderer::cmd_romfont(uint32_t, uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:3106:6:virtual void FT81xRenderer::cmd_snapshot(uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1441:6:void FT81xRenderer::cN(uint8_t*, uint16_t)	72	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1321:6:void FT81xRenderer::align32(uint32_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2456:6:virtual void FT81xRenderer::cmd_button(uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, const char*)	40	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2480:6:virtual void FT81xRenderer::cmd_clock(uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t)	24	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2551:6:virtual void FT81xRenderer::cmd_gauge(int16_t, int16_t, int16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t)	24	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2572:6:virtual void FT81xRenderer::cmd_gradient_rgb32(int16_t, int16_t, uint32_t, int16_t, int16_t, uint32_t)	32	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2594:6:virtual void FT81xRenderer::cmd_keys(int16_t, int16_t, int16_t, int16_t, int16_t, uint16_t, const char*)	40	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2619:6:virtual void FT81xRenderer::cmd_progress(int16_t, int16_t, int16_t, int16_t, uint16_t, uint16_t, uint16_t)	24	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2641:6:virtual void FT81xRenderer::cmd_scrollbar(int16_t, int16_t, int16_t, int16_t, uint16_t, uint16_t, uint16_t, uint16_t)	24	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2663:6:virtual void FT81xRenderer::cmd_slider(int16_t, int16_t, int16_t, int16_t, uint16_t, uint16_t, uint16_t)	24	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2685:6:virtual void FT81xRenderer::cmd_dial(int16_t, int16_t, int16_t, uint16_t, uint16_t)	24	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2705:6:virtual void FT81xRenderer::cmd_toggle(int16_t, int16_t, int16_t, int16_t, uint16_t, uint16_t, const char*)	40	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2729:6:virtual void FT81xRenderer::cmd_text(int16_t, int16_t, int16_t, uint16_t, const char*)	32	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2762:6:virtual void FT81xRenderer::cmd_number(int16_t, int16_t, int16_t, uint16_t, int32_t)	24	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:2979:6:virtual void FT81xRenderer::cmd_spinner(int16_t, int16_t, int16_t, int16_t)	16	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:3007:6:virtual void FT81xRenderer::cmd_sketch(int16_t, int16_t, int16_t, int16_t, int16_t, int16_t)	24	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:3086:6:virtual void FT81xRenderer::cmd_track(int16_t, int16_t, int16_t, int16_t, int16_t)	24	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:3117:6:virtual void FT81xRenderer::cmd_snapshot2(uint32_t, uint32_t, uint16_t, uint16_t, uint16_t, uint16_t)	24	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:3137:6:virtual void FT81xRenderer::cmd_setbitmap(uint32_t, uint16_t, uint16_t, uint16_t)	24	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1474:6:void FT81xRenderer::cSPOOL(uint8_t*, int32_t)	32	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:1626:6:void FT81xRenderer::swap()	8	static
+../System/Libraries/FT81x/FT81xRenderer.cpp:3157:6:void FT81xRenderer::logo()	8	static

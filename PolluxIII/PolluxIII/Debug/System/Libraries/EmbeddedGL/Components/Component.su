@@ -1,0 +1,48 @@
+../System/Libraries/EmbeddedGL/Components/Component.h:32:2:virtual const char* Component::__getSource()	0	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:77:6:virtual void Component::onTouchEvent()	0	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:155:6:virtual void Component::render(Renderer*)	0	static
+../System/Libraries/Utils/LinkedList.h:23:10:Iterator<T>::~Iterator() [with T = Component*]	0	static
+../System/Libraries/Utils/LinkedList.h:19:2:const char* Iterator<T>::__getSource() [with T = std::function<void()>]	0	static
+../System/Libraries/Utils/LinkedList.h:19:2:const char* Iterator<T>::__getSource() [with T = Component*]	0	static
+../System/Libraries/Utils/LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = std::function<void()>]	0	static
+../System/Libraries/Utils/LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = Component*]	0	static
+../System/Libraries/Utils/LinkedList.h:23:10:Iterator<T>::~Iterator() [with T = Component*]	8	static
+../System/Libraries/EmbeddedGL/Components/Component.h:35:10:Component::~Component()	8	static
+../System/Libraries/EmbeddedGL/Components/Component.h:35:10:virtual Component::~Component()	8	static
+../System/Libraries/Utils/LinkedList.h:109:32:Iterator<T> Iterator<T>::operator++(int) [with T = Component*]	0	static
+/Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/arm-none-eabi/include/c++/10.3.1/bits/std_function.h:242:5:std::_Function_base::~_Function_base()	8	static
+../System/Libraries/Utils/LinkedList.h:23:10:Iterator<T>::~Iterator() [with T = std::function<void()>]	8	static
+../System/Libraries/Utils/LinkedList.h:23:10:Iterator<T>::~Iterator() [with T = std::function<void()>]	8	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:11:1:Component::Component()	24	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:21:6:bool Component::add(Component*, float, float, float, float)	40	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:17:6:bool Component::add(Component*, float, float)	0	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:37:12:Component* Component::getComponentAt(float, float)	64	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:62:6:bool Component::enableTouchEvents()	8	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:89:6:bool Component::unregisterTouchHandler(std::function<void()>)	0	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:138:6:void Component::updateLayout()	48	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:159:6:void Component::setContext(Context*)	56	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:180:6:bool Component::hasRenderingContext()	0	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:184:6:bool Component::hasRenderer()	8	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:93:6:void Component::renderAll()	56	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:188:12:Component* Component::setAlpha(uint8_t)	0	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:194:12:Component* Component::setOutlineColor(uint32_t)	0	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:200:12:Component* Component::setForegroundColor(uint32_t)	0	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:206:12:Component* Component::setBackgroundColor(uint32_t)	0	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:213:12:Component* Component::setVisible(bool)	0	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:218:12:Component* Component::setEnabled(bool)	0	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:223:9:uint8_t Component::getAlpha()	0	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:227:10:uint32_t Component::getOutlineColor()	0	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:231:10:uint32_t Component::getForegroundColor()	0	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:235:10:uint32_t Component::getBackgroundColor()	0	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:239:6:bool Component::isAlphaSet()	0	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:243:6:bool Component::isOutlineSet()	0	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:247:6:bool Component::isBackgroundSet()	0	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:251:6:bool Component::isForegroundSet()	0	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:255:6:bool Component::isVisible()	0	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:259:6:bool Component::isEnabled()	0	static
+../System/Libraries/Utils/LinkedList.h:180:25:bool LinkedList<T>::remove(T) [with T = Component*]	56	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:33:6:bool Component::remove(Component*)	8	static
+/Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/arm-none-eabi/include/c++/10.3.1/bits/std_function.h:587:5:)>&) [with _Res = void; _ArgTypes = {}]	16	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:176:6:bool Component::async(std::function<void()>)	32	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:85:6:bool Component::registerTouchHandler(std::function<void()>)	56	static
+../System/Libraries/EmbeddedGL/Components/Component.cpp:67:6:void Component::triggerTouchEvent()	112	static

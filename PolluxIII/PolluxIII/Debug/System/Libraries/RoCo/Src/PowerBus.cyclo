@@ -1,0 +1,7 @@
+LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = std::function<void(unsigned char, void*)>]	1
+PowerBus.cpp:37:6:virtual bool PowerBus::internal_send(PacketDefinition*, uint8_t*)	1
+MessageBus.h:29:10:MessageBus::~MessageBus()	2
+PowerBus.h:24:7:PowerBus::~PowerBus()	1
+PowerBus.h:24:7:virtual PowerBus::~PowerBus()	1
+MessageBus.h:29:10:virtual MessageBus::~MessageBus()	1
+PowerBus.cpp:18:1:PowerBus::PowerBus(IODriver*)	1

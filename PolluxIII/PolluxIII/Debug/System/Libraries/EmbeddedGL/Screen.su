@@ -1,0 +1,8 @@
+../System/Libraries/EmbeddedGL/Components/Component.h:32:2:virtual const char* Component::__getSource()	0	static
+../System/Libraries/Utils/LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = std::function<void()>]	0	static
+../System/Libraries/Utils/LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = Component*]	0	static
+../System/Libraries/EmbeddedGL/Screen.cpp:10:6:virtual void Screen::render(Renderer*)	32	static
+../System/Libraries/EmbeddedGL/Components/Component.h:35:10:Component::~Component()	8	static
+../System/Libraries/EmbeddedGL/Screen.h:13:7:Screen::~Screen()	8	static
+../System/Libraries/EmbeddedGL/Screen.h:13:7:virtual Screen::~Screen()	8	static
+../System/Libraries/EmbeddedGL/Components/Component.h:35:10:virtual Component::~Component()	8	static

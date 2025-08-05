@@ -1,0 +1,11 @@
+IOBus.cpp:46:6:virtual void IOBus::transmit()	1
+LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = std::function<void(unsigned char, void*)>]	1
+IOBus.cpp:22:6:void IOBus::receive(uint8_t, uint8_t*, uint32_t)	2
+IOBus.cpp:32:10:virtual uint32_t IOBus::append(uint8_t*, uint32_t)	1
+std_function.h:289:7:) [with _Res = void; _Functor = std::_Bind<void (IOBus::*(IOBus*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(unsigned char, unsigned char*, long unsigned int)>; _ArgTypes = {unsigned char, unsigned char*, long unsigned int}]	2
+std_function.h:268:7:), _Functor>::_M_manager(std::_Any_data&, const std::_Any_data&, std::_Manager_operation) [with _Res = void; _Functor = std::_Bind<void (IOBus::*(IOBus*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(unsigned char, unsigned char*, long unsigned int)>; _ArgTypes = {unsigned char, unsigned char*, long unsigned int}]	6
+MessageBus.h:29:10:MessageBus::~MessageBus()	2
+IOBus.h:15:7:IOBus::~IOBus()	1
+IOBus.h:15:7:virtual IOBus::~IOBus()	1
+MessageBus.h:29:10:virtual MessageBus::~MessageBus()	1
+IOBus.cpp:12:1:IOBus::IOBus(IODriver*, uint8_t*, uint32_t)	5

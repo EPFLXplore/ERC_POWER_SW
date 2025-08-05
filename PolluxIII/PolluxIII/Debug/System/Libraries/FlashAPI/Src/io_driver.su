@@ -1,0 +1,14 @@
+../System/Libraries/FlashAPI/Src/io_driver.cpp:16:9:uint8_t __read_flags()	72	static
+../System/Libraries/FlashAPI/Src/io_driver.cpp:34:9:uint8_t __read_status()	72	static
+../System/Libraries/FlashAPI/Src/io_driver.cpp:58:6:bool __write_enable_latch()	64	static
+../System/Libraries/FlashAPI/Src/io_driver.cpp:80:6:bool __write_disable_latch()	64	static
+../System/Libraries/FlashAPI/Src/io_driver.cpp:89:6:void flash_init()	72	static
+../System/Libraries/FlashAPI/Src/io_driver.cpp:148:6:void reset_memory()	64	static
+../System/Libraries/FlashAPI/Src/io_driver.cpp:162:6:void flash_read(uint32_t, uint8_t*, uint32_t)	72	static
+../System/Libraries/FlashAPI/Src/io_driver.cpp:190:6:void __flash_write_page(uint32_t, uint8_t*, uint32_t)	72	static
+../System/Libraries/FlashAPI/Src/io_driver.cpp:217:6:void flash_write(uint32_t, uint8_t*, uint32_t)	24	static
+../System/Libraries/FlashAPI/Src/io_driver.cpp:248:6:void __NOT_WORKING__flash_erase_all()	64	static
+../System/Libraries/FlashAPI/Src/io_driver.cpp:278:6:void __flash_erase(uint32_t, uint32_t)	72	static
+../System/Libraries/FlashAPI/Src/io_driver.cpp:304:6:void flash_erase_sector(uint32_t)	0	static
+../System/Libraries/FlashAPI/Src/io_driver.cpp:242:6:void flash_erase_all()	8	static
+../System/Libraries/FlashAPI/Src/io_driver.cpp:313:6:void flash_erase_subsector(uint32_t)	0	static

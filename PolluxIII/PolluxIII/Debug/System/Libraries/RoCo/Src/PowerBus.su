@@ -1,0 +1,7 @@
+../System/Libraries/Utils/LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = std::function<void(unsigned char, void*)>]	0	static
+../System/Libraries/RoCo/Src/PowerBus.cpp:37:6:virtual bool PowerBus::internal_send(PacketDefinition*, uint8_t*)	24	static
+../System/Libraries/RoCo/Src/MessageBus.h:29:10:MessageBus::~MessageBus()	24	static
+../System/Libraries/RoCo/Src/PowerBus.h:24:7:PowerBus::~PowerBus()	8	static
+../System/Libraries/RoCo/Src/PowerBus.h:24:7:virtual PowerBus::~PowerBus()	8	static
+../System/Libraries/RoCo/Src/MessageBus.h:29:10:virtual MessageBus::~MessageBus()	8	static
+../System/Libraries/RoCo/Src/PowerBus.cpp:18:1:PowerBus::PowerBus(IODriver*)	8	static

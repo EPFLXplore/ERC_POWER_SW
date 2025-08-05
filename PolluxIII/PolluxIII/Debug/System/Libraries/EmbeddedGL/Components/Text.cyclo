@@ -1,0 +1,15 @@
+Text.h:28:2:virtual const char* Text::__getSource()	1
+Text.cpp:17:6:virtual void Text::render(Renderer*)	2
+LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = std::function<void()>]	1
+LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = Component*]	1
+Text.h:28:2:virtual const char* Text::_ZTv0_n12_N4Text11__getSourceEv()	1
+Component.h:35:10:Component::~Component()	1
+Text.h:26:7:virtual Text::~Text()	1
+Text.h:26:7:virtual Text::~Text()	1
+Component.h:35:10:virtual Component::~Component()	1
+Text.cpp:13:1:Text::Text()	1
+Text.cpp:13:1:Text::Text()	1
+Text.cpp:47:7:Text* Text::setText(const char*)	1
+Text.cpp:55:7:Text* Text::setFontSize(uint8_t)	1
+Text.cpp:60:7:Text* Text::setAnchor(Anchor)	1
+Text.h:26:7:Text::~Text()	1

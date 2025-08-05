@@ -1,0 +1,16 @@
+Component.h:32:2:virtual const char* Component::__getSource()	1
+PowerBox.h:19:2:virtual const char* PowerBox::__getSource()	1
+UnregulatedBox.h:16:2:virtual const char* UnregulatedBox::__getSource()	1
+LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = std::function<void()>]	1
+LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = Component*]	1
+UnregulatedBox.cpp:11:1:UnregulatedBox::UnregulatedBox(MessageBus*, PowerMonitor)	12
+UnregulatedBox.h:16:2:virtual const char* UnregulatedBox::_ZTv0_n12_N14UnregulatedBox11__getSourceEv()	1
+PowerBox.h:19:2:virtual const char* PowerBox::_ZTv0_n12_N8PowerBox11__getSourceEv()	1
+Component.h:35:10:Component::~Component()	1
+Component.h:35:10:virtual Component::~Component()	1
+UnregulatedBox.cpp:11:1:UnregulatedBox::UnregulatedBox(MessageBus*, PowerMonitor)	1
+UnregulatedBox.cpp:11:1:UnregulatedBox::UnregulatedBox(MessageBus*, PowerMonitor)	1
+UnregulatedBox.h:14:7:virtual UnregulatedBox::~UnregulatedBox()	5
+UnregulatedBox.h:14:7:virtual UnregulatedBox::~UnregulatedBox()	1
+UnregulatedBox.h:14:7:virtual UnregulatedBox::~UnregulatedBox()	1
+UnregulatedBox.h:14:7:UnregulatedBox::~UnregulatedBox()	1

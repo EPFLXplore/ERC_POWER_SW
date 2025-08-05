@@ -1,0 +1,5 @@
+LoopbackDriver.cpp:14:6:virtual void LoopbackDriver::transmit(uint8_t*, uint32_t)	1
+std_function.h:242:5:std::_Function_base::~_Function_base()	2
+LoopbackDriver.h:13:7:LoopbackDriver::~LoopbackDriver()	1
+LoopbackDriver.h:13:7:virtual LoopbackDriver::~LoopbackDriver()	1
+LoopbackDriver.cpp:10:6:virtual void LoopbackDriver::receive(const std::function<void(unsigned char, unsigned char*, long unsigned int)>&)	2

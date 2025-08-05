@@ -1,0 +1,17 @@
+/*
+ * Theme.h
+ *
+ *  Created on: 12 Jun 2023
+ *      Author: arion
+ */
+
+#ifndef LIBRARIES_EMBEDDEDGL_THEME_H_
+#define LIBRARIES_EMBEDDEDGL_THEME_H_
+
+
+#define FOREGROUND_COLOR	0xFFFFFF
+#define BACKGROUND_COLOR	0x141C31
+#define OUTLINE_COLOR		0xFFFFFF
+
+
+#endif /* LIBRARIES_EMBEDDEDGL_THEME_H_ */

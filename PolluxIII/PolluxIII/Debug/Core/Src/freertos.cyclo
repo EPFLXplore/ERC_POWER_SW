@@ -1,0 +1,4 @@
+freertos.c:133:6:systemd_main	1
+freertos.c:68:13:vApplicationStackOverflowHook	1
+freertos.c:80:6:vApplicationGetIdleTaskMemory	1
+freertos.c:94:6:MX_FREERTOS_Init	1

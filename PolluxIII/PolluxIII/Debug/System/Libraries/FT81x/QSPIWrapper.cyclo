@@ -1,0 +1,5 @@
+QSPIWrapper.cpp:17:19:HAL_StatusTypeDef QSPIWrapper::setup(uint32_t)	2
+QSPIWrapper.cpp:138:19:HAL_StatusTypeDef QSPIWrapper::flush(uint32_t)	1
+QSPIWrapper.cpp:31:19:HAL_StatusTypeDef QSPIWrapper::run(QSPI_CommandTypeDef*, uint32_t)	13
+QSPIWrapper.cpp:98:19:HAL_StatusTypeDef QSPIWrapper::transmit(uint8_t*, uint32_t)	4
+QSPIWrapper.cpp:113:19:HAL_StatusTypeDef QSPIWrapper::receive(uint8_t*, uint32_t)	3

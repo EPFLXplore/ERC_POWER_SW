@@ -1,0 +1,13 @@
+MainScreen.h:23:2:virtual const char* MainScreen::__getSource()	1
+LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = std::function<void()>]	1
+LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = Component*]	1
+MainScreen.cpp:61:6:void MainScreen::showDetailedStats(PowerMonitor)	1
+std_function.h:289:7:) [with _Res = void; _Functor = std::_Bind<void (MainScreen::*(MainScreen*, PowerMonitor))(PowerMonitor)>; _ArgTypes = {}]	2
+std_function.h:268:7:), _Functor>::_M_manager(std::_Any_data&, const std::_Any_data&, std::_Manager_operation) [with _Res = void; _Functor = std::_Bind<void (MainScreen::*(MainScreen*, PowerMonitor))(PowerMonitor)>; _ArgTypes = {}]	6
+std_function.h:242:5:std::_Function_base::~_Function_base()	2
+Component.h:35:10:Component::~Component()	1
+MainScreen.cpp:50:1:MainScreen::~MainScreen()	9
+MainScreen.cpp:50:1:virtual MainScreen::~MainScreen()	1
+Component.h:35:10:virtual Component::~Component()	1
+std_function.h:601:7:)>::function(_Functor) [with _Functor = std::_Bind<void (MainScreen::*(MainScreen*, PowerMonitor))(PowerMonitor)>; <template-parameter-2-2> = void; <template-parameter-2-3> = void; _Res = void; _ArgTypes = {}]	1
+MainScreen.cpp:12:1:MainScreen::MainScreen(MessageBus*)	14

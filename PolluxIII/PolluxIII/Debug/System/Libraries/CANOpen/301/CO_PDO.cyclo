@@ -1,0 +1,14 @@
+CO_PDO.c:44:14:OD_write_dummy	2
+CO_PDO.c:87:14:PDOconfigMap	11
+CO_PDO.c:231:14:OD_write_PDO_mapping	16
+CO_PDO.c:465:13:CO_PDO_receive	6
+CO_PDO.c:519:14:OD_write_14xx	27
+CO_PDO.c:944:14:OD_write_18xx	29
+CO_PDO.c:164:25:PDO_initMapping.constprop	17
+CO_PDO.c:412:14:OD_read_PDO_commParam	7
+CO_PDO.c:57:14:OD_read_dummy	4
+CO_PDO.c:1226:25:CO_TPDOsend.isra	6
+CO_PDO.c:627:18:CO_RPDO_init	20
+CO_PDO.c:776:6:CO_RPDO_process	20
+CO_PDO.c:1067:18:CO_TPDO_init	21
+CO_PDO.c:1318:6:CO_TPDO_process	30

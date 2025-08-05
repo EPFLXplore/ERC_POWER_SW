@@ -1,0 +1,11 @@
+../System/Libraries/CANOpen/CANopen.c:615:6:CO_delete	8	static
+../System/Libraries/CANOpen/CANopen.c:323:7:CO_new	16	static
+../System/Libraries/CANOpen/CANopen.c:834:8:CO_isLSSslaveEnabled	0	static
+../System/Libraries/CANOpen/CANopen.c:844:18:CO_CANinit	40	static
+../System/Libraries/CANOpen/CANopen.c:867:18:CO_LSSinit	40	static
+../System/Libraries/CANOpen/CANopen.c:896:18:CO_CANopenInit	96	static
+../System/Libraries/CANOpen/CANopen.c:1206:18:CO_CANopenInitPDO	72	static
+../System/Libraries/CANOpen/CANopen.c:1293:20:CO_process	88	static
+../System/Libraries/CANOpen/CANopen.c:1409:8:CO_process_SYNC	16	static
+../System/Libraries/CANOpen/CANopen.c:1444:6:CO_process_RPDO	40	static
+../System/Libraries/CANOpen/CANopen.c:1472:6:CO_process_TPDO	40	static

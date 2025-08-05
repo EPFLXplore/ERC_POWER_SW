@@ -1,0 +1,22 @@
+../System/Libraries/EmbeddedGL/Components/Component.h:32:2:virtual const char* Component::__getSource()	0	static
+../System/GUI/PowerBox.h:19:2:virtual const char* PowerBox::__getSource()	0	static
+../System/Libraries/Utils/LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = std::function<void()>]	0	static
+../System/Libraries/Utils/LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = Component*]	0	static
+../System/GUI/PowerBox.cpp:40:6:void PowerBox::handleBusInfo(uint8_t, Power_BusInfo*)	32	static
+../System/GUI/PowerBox.cpp:52:6:void PowerBox::handleSupplyInfo(uint8_t, Power_SupplyInfo*)	0	static
+/Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/arm-none-eabi/include/c++/10.3.1/bits/std_function.h:289:7:) [with _Res = void; _Functor = std::_Bind<void (PowerBox::*(PowerBox*, std::_Placeholder<1>, std::_Placeholder<2>))(unsigned char, Power_SupplyInfo*)>; _ArgTypes = {unsigned char, Power_SupplyInfo*}]	12	static
+/Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/arm-none-eabi/include/c++/10.3.1/bits/std_function.h:289:7:) [with _Res = void; _Functor = std::_Bind<void (PowerBox::*(PowerBox*, std::_Placeholder<1>, std::_Placeholder<2>))(unsigned char, Power_BusInfo*)>; _ArgTypes = {unsigned char, Power_BusInfo*}]	12	static
+/Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/arm-none-eabi/include/c++/10.3.1/bits/std_function.h:268:7:), _Functor>::_M_manager(std::_Any_data&, const std::_Any_data&, std::_Manager_operation) [with _Res = void; _Functor = std::_Bind<void (PowerBox::*(PowerBox*, std::_Placeholder<1>, std::_Placeholder<2>))(unsigned char, Power_SupplyInfo*)>; _ArgTypes = {unsigned char, Power_SupplyInfo*}]	16	static
+/Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/arm-none-eabi/include/c++/10.3.1/bits/std_function.h:268:7:), _Functor>::_M_manager(std::_Any_data&, const std::_Any_data&, std::_Manager_operation) [with _Res = void; _Functor = std::_Bind<void (PowerBox::*(PowerBox*, std::_Placeholder<1>, std::_Placeholder<2>))(unsigned char, Power_BusInfo*)>; _ArgTypes = {unsigned char, Power_BusInfo*}]	16	static
+../System/GUI/PowerBox.h:19:2:virtual const char* PowerBox::_ZTv0_n12_N8PowerBox11__getSourceEv()	0	static
+/Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/arm-none-eabi/include/c++/10.3.1/bits/std_function.h:242:5:std::_Function_base::~_Function_base()	8	static
+../System/GUI/PowerBox.cpp:11:1:PowerBox::PowerBox(MessageBus*, PowerMonitor)	40	static
+../System/Libraries/EmbeddedGL/Components/Component.h:35:10:Component::~Component()	8	static
+../System/Libraries/EmbeddedGL/Components/Component.h:35:10:virtual Component::~Component()	8	static
+../System/GUI/PowerBox.cpp:11:1:PowerBox::PowerBox(MessageBus*, PowerMonitor)	16	static
+../System/GUI/PowerBox.cpp:11:1:PowerBox::PowerBox(MessageBus*, PowerMonitor)	16	static
+../System/GUI/PowerBox.cpp:24:1:virtual PowerBox::~PowerBox()	16	static
+../System/GUI/PowerBox.cpp:24:1:virtual PowerBox::~PowerBox()	0	static
+../System/GUI/PowerBox.cpp:24:1:virtual PowerBox::~PowerBox()	8	static
+../System/GUI/PowerBox.cpp:24:1:PowerBox::~PowerBox()	0	static
+../System/GUI/PowerBox.cpp:30:11:PowerBox* PowerBox::setError(bool)	8	static

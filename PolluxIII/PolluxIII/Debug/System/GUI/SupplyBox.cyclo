@@ -1,0 +1,16 @@
+Component.h:32:2:virtual const char* Component::__getSource()	1
+PowerBox.h:19:2:virtual const char* PowerBox::__getSource()	1
+SupplyBox.h:16:2:virtual const char* SupplyBox::__getSource()	1
+LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = std::function<void()>]	1
+LinkedList.h:50:2:const char* LinkedList<T>::__getSource() [with T = Component*]	1
+SupplyBox.cpp:10:1:SupplyBox::SupplyBox(Anchor, MessageBus*, PowerMonitor)	15
+SupplyBox.h:16:2:virtual const char* SupplyBox::_ZTv0_n12_N9SupplyBox11__getSourceEv()	1
+PowerBox.h:19:2:virtual const char* PowerBox::_ZTv0_n12_N8PowerBox11__getSourceEv()	1
+Component.h:35:10:Component::~Component()	1
+Component.h:35:10:virtual Component::~Component()	1
+SupplyBox.cpp:10:1:SupplyBox::SupplyBox(Anchor, MessageBus*, PowerMonitor)	1
+SupplyBox.cpp:10:1:SupplyBox::SupplyBox(Anchor, MessageBus*, PowerMonitor)	1
+SupplyBox.h:14:7:virtual SupplyBox::~SupplyBox()	5
+SupplyBox.h:14:7:virtual SupplyBox::~SupplyBox()	1
+SupplyBox.h:14:7:virtual SupplyBox::~SupplyBox()	1
+SupplyBox.h:14:7:SupplyBox::~SupplyBox()	1

@@ -1,0 +1,20 @@
+../System/Thread.h:20:2:virtual const char* Thread::__getSource()	0	static
+../System/Logging.h:15:7:Logging::~Logging()	0	static
+../System/Logging.cpp:33:6:virtual void Logging::init()	24	static
+../System/Logging.cpp:14:13:void __debug(const char*)	0	static
+../System/Logging.cpp:48:6:virtual void Logging::loop()	584	static
+../System/Logging.h:15:7:virtual Logging::~Logging()	8	static
+../System/Logging.cpp:19:1:Logging::Logging(MessageBus*)	16	static
+../System/Logging.cpp:87:6:void Logging::pauseLogging()	0	static
+../System/Logging.cpp:91:6:void Logging::resumeLogging()	0	static
+../System/Logging.cpp:95:6:void Logging::newMission()	80	static
+../System/Logging.cpp:158:6:void Logging::updateTimestamp(uint64_t)	0	static
+../System/Logging.cpp:162:6:void Logging::beginBlock()	24	static
+../System/Logging.cpp:171:6:void Logging::writeData(float)	16	static
+../System/Logging.cpp:180:6:void Logging::endBlock()	16	static
+../System/Logging.cpp:192:7:float Logging::getFlashUsage()	8	static
+../System/Logging.cpp:196:10:uint32_t Logging::getMissionID()	0	static
+../System/Logging.cpp:200:8:Stream Logging::getMission(uint32_t)	88	static
+../System/Logging.cpp:236:6:bool Logging::missionUploadBegin(uint32_t)	40	static
+../System/Logging.cpp:241:6:void Logging::missionUploadNext()	0	static
+../System/Logging.cpp:245:6:void Logging::missionUploadProcess()	8	static
